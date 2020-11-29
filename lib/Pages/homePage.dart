@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
-class AppDrawerHeader extends StatelessWidget {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AppDrawerHeader();
+    return Scaffold(
+      body: Text("Home"),
+    );
   }
 }

@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'Navigation/navigation.dart';
+import 'Navigation/mainContainer.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,8 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Home App',
         theme: ThemeData(
-          primarySwatch: Colors.indigo,
-        ),
-        home: Navigation());
+            primarySwatch: Colors.amber, scaffoldBackgroundColor: Colors.white),
+        home: MainContainerWidget());
   }
 }
