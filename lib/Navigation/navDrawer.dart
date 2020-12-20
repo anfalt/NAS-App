@@ -10,9 +10,9 @@ class NavDrawerWidget extends StatelessWidget {
   final String accountEmail;
   final List<_NavigationItem> _listItems = [
     _NavigationItem(true, null, null, null),
-    _NavigationItem(false, NavItem.homePage, "First Page", Icons.looks_one),
-    _NavigationItem(false, NavItem.imagePage, "Second Page", Icons.looks_two),
-    _NavigationItem(false, NavItem.calendarPage, "Third Page", Icons.looks_3)
+    _NavigationItem(false, NavItem.homePage, "Start", Icons.home),
+    _NavigationItem(false, NavItem.imagePage, "Bilder", Icons.image),
+    _NavigationItem(false, NavItem.calendarPage, "Kalender", Icons.event)
   ];
   NavDrawerWidget(this.accountName, this.accountEmail);
   @override

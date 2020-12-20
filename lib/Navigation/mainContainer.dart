@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nas_app/Navigation/floatinActionButtons/fabImagesPage.dart';
 import 'package:nas_app/Pages/calendarPage.dart';
 import 'package:nas_app/Pages/homePage.dart';
 import 'package:nas_app/Pages/imagesPage.dart';
@@ -8,21 +9,52 @@ import './navDrawer.dart';
 import '../bloc/nav_drawer_bloc.dart';
 import '../bloc/nav_drawer_state.dart';
 
-class MainContainerWidget extends StatelessWidget {
+class MainContainer extends StatefulWidget {
+  @override
+  _MainContainerState createState() => _MainContainerState();
+}
+
+class _MainContainerState extends State<MainContainer> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return BlocProvider<NavDrawerBloc>(
-        create: (BuildContext context) => NavDrawerBloc(),
-        child: BlocBuilder<NavDrawerBloc, NavDrawerState>(
-          builder: (BuildContext context, NavDrawerState state) => Scaffold(
+      create: (BuildContext context) => NavDrawerBloc(),
+      child: BlocBuilder<NavDrawerBloc, NavDrawerState>(
+        builder: (BuildContext context, NavDrawerState state) => Scaffold(
+            key: _scaffoldKey,
             drawer: NavDrawerWidget("Joe Shmoe", "shmoe@joesemail.com"),
             appBar: AppBar(
               title: Text(_getTextForItem(state.selectedItem)),
             ),
+            bottomNavigationBar: BottomAppBar(
+              child: Row(
+                children: <Widget>[
+                  //First action menu widget
+                  // Bottom that pops up from the bottom of the screen.
+                  IconButton(
+                    icon: Icon(Icons.menu),
+                    onPressed: () {
+                      _scaffoldKey.currentState.openDrawer();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {},
+                  ),
+
+                  //Third action menu widget for overflow action
+                  IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
             body: _bodyForState(state),
-            //floatingActionButton: _getFabForItem(state.selectedItem)),
-          ),
-        ));
+            floatingActionButton: _getFabForItem(state.selectedItem)),
+      ),
+    );
   }
 
   _getTextForItem(NavItem item) {
@@ -69,25 +101,25 @@ class MainContainerWidget extends StatelessWidget {
     }
   }
 
-  // _getFabForItem(NavItem item) {
-  //   switch (item) {
-  //     case NavItem.calendarPage:
-  //       {
-  //         return "Kalendar";
-  //       }
-  //       break;
+  _getFabForItem(NavItem item) {
+    switch (item) {
+      case NavItem.calendarPage:
+        {
+          return "Kalendar";
+        }
+        break;
 
-  //     case NavItem.homePage:
-  //       {
-  //         return "Start";
-  //       }
-  //       break;
+      case NavItem.homePage:
+        {
+          return null;
+        }
+        break;
 
-  //     case NavItem.imagePage:
-  //       {
-  //         return "Bilder";
-  //       }
-  //       break;
-  //   }
-  //}
+      case NavItem.imagePage:
+        {
+          return new FabImagesPage();
+        }
+        break;
+    }
+  }
 }

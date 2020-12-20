@@ -3,8 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-
-import 'Navigation/mainContainer.dart';
+import 'package:nas_app/Pages/logInPage.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,6 +14,6 @@ class MyApp extends StatelessWidget {
         title: 'Home App',
         theme: ThemeData(
             primarySwatch: Colors.amber, scaffoldBackgroundColor: Colors.white),
-        home: MainContainerWidget());
+        home: LogInPage());
   }
 }
