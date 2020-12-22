@@ -1,11 +1,11 @@
-class PhotoApiResponse {
+class PhotoApiAuthResponse {
   bool success;
   PhotoApiData data;
   PhotoApiError error;
 
-  PhotoApiResponse({this.success, this.data});
+  PhotoApiAuthResponse({this.success, this.data});
 
-  PhotoApiResponse.fromJson(Map<String, dynamic> json) {
+  PhotoApiAuthResponse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     data =
         json['data'] != null ? new PhotoApiData.fromJson(json['data']) : null;

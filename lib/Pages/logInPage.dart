@@ -57,8 +57,10 @@ class _LoginPageState extends State<LogInPage> {
                       color: Colors.blue,
                       child: Text('Login'),
                       onPressed: () {
-                        _authController.authenticateUser(
-                            nameController.text, passwordController.text);
+                        _authController
+                            .authenticateUser(
+                                nameController.text, passwordController.text)
+                            .then((value) => print("test"));
                       },
                     )),
               ],
