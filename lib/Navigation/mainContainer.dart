@@ -8,6 +8,7 @@ import 'package:nas_app/Pages/imagesPage.dart';
 import './navDrawer.dart';
 import '../bloc/nav_drawer_bloc.dart';
 import '../bloc/nav_drawer_state.dart';
+import "../globals.dart" as globals;
 
 class MainContainer extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class _MainContainerState extends State<MainContainer> {
       child: BlocBuilder<NavDrawerBloc, NavDrawerState>(
         builder: (BuildContext context, NavDrawerState state) => Scaffold(
             key: _scaffoldKey,
-            drawer: NavDrawerWidget("Joe Shmoe", "shmoe@joesemail.com"),
+            drawer: NavDrawerWidget(globals.user.name),
             appBar: AppBar(
               title: Text(_getTextForItem(state.selectedItem)),
             ),
@@ -51,8 +52,8 @@ class _MainContainerState extends State<MainContainer> {
                 ],
               ),
             ),
-            body: _bodyForState(state),
-            floatingActionButton: _getFabForItem(state.selectedItem)),
+            body: _bodyForState(state)),
+        //floatingActionButton: _getFabForItem(state.selectedItem)),
       ),
     );
   }
@@ -105,13 +106,13 @@ class _MainContainerState extends State<MainContainer> {
     switch (item) {
       case NavItem.calendarPage:
         {
-          return "Kalendar";
+          return new FabImagesPage();
         }
         break;
 
       case NavItem.homePage:
         {
-          return null;
+          return new FabImagesPage();
         }
         break;
 

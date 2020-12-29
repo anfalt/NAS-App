@@ -1,20 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:nas_app/Pages/logInPage.dart';
 
 import '../bloc/nav_drawer_bloc.dart';
 import '../bloc/nav_drawer_event.dart';
 import '../bloc/nav_drawer_state.dart';
+import "../globals.dart" as globals;
 
 class NavDrawerWidget extends StatelessWidget {
   final String accountName;
-  final String accountEmail;
   final List<_NavigationItem> _listItems = [
     _NavigationItem(true, null, null, null),
     _NavigationItem(false, NavItem.homePage, "Start", Icons.home),
     _NavigationItem(false, NavItem.imagePage, "Bilder", Icons.image),
     _NavigationItem(false, NavItem.calendarPage, "Kalender", Icons.event)
   ];
-  NavDrawerWidget(this.accountName, this.accountEmail);
+  NavDrawerWidget(this.accountName);
+
+  void logoutUser(BuildContext context) {
+    final storage = new FlutterSecureStorage();
+    List<Future<void>> futures = [];
+    futures.add(storage.delete(key: "userName"));
+    futures.add(storage.delete(key: "password"));
+
+    Future.wait(futures).then((values) => {
+          globals.user = null,
+          Navigator.pushReplacement(
+              context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) => new LogInPage()))
+        });
+  }
+
   @override
   Widget build(BuildContext context) => Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
@@ -28,30 +46,41 @@ class NavDrawerWidget extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) =>
                 BlocBuilder<NavDrawerBloc, NavDrawerState>(
                   builder: (BuildContext context, NavDrawerState state) =>
-                      _buildItem(_listItems[index], state),
+                      _buildItem(_listItems[index], state, context),
                 )),
       ));
-  Widget _buildItem(_NavigationItem data, NavDrawerState state) => data.header
-      // if the item is a header return the header widget
-      ? _makeHeaderItem()
-      // otherwise build and return the default list item
-      : _makeListItem(data, state);
-  Widget _makeHeaderItem() => UserAccountsDrawerHeader(
-        accountName: Text(accountName, style: TextStyle(color: Colors.white)),
-        accountEmail: Text(accountEmail, style: TextStyle(color: Colors.white)),
-        decoration: BoxDecoration(color: Colors.blueGrey),
-        currentAccountPicture: CircleAvatar(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.amber,
-          child: Icon(
-            Icons.person,
-            size: 54,
-          ),
+  Widget _buildItem(
+          _NavigationItem data, NavDrawerState state, BuildContext context) =>
+      data.header
+          // if the item is a header return the header widget
+          ? _makeHeaderItem(context)
+          // otherwise build and return the default list item
+          : _makeListItem(data, state, context);
+
+  Widget _makeHeaderItem(BuildContext context) => Container(
+      height: 100,
+      child: DrawerHeader(
+        child: Row(
+          children: [
+            Text(accountName, style: TextStyle(color: Colors.white)),
+            IconButton(
+                icon: Icon(
+                  Icons.logout,
+                  size: 16,
+                ),
+                onPressed: () => {logoutUser(context)}),
+          ],
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
         ),
-      );
-  Widget _makeListItem(_NavigationItem data, NavDrawerState state) => Card(
-        color:
-            data.item == state.selectedItem ? Colors.greenAccent : Colors.white,
+        decoration: BoxDecoration(color: Theme.of(context).accentColor),
+      ));
+
+  Widget _makeListItem(
+          _NavigationItem data, NavDrawerState state, BuildContext context) =>
+      Card(
+        color: data.item == state.selectedItem
+            ? Theme.of(context).accentColor
+            : Colors.white,
         shape: ContinuousRectangleBorder(borderRadius: BorderRadius.zero),
         // So we see the selected highlight
         borderOnForeground: true,
@@ -63,16 +92,16 @@ class NavDrawerWidget extends StatelessWidget {
               data.title,
               style: TextStyle(
                 color: data.item == state.selectedItem
-                    ? Colors.blue
-                    : Colors.blueGrey,
+                    ? Theme.of(context).textTheme.headline1.color
+                    : Theme.of(context).primaryColor,
               ),
             ),
             leading: Icon(
               data.icon,
               // if it's selected change the color
               color: data.item == state.selectedItem
-                  ? Colors.blue
-                  : Colors.blueGrey,
+                  ? Theme.of(context).accentIconTheme.color
+                  : Theme.of(context).primaryColor,
             ),
             onTap: () => _handleItemClick(context, data.item),
           ),

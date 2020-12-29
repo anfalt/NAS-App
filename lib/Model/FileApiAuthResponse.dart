@@ -1,11 +1,14 @@
 class FileApiAuthResponse {
-  Data data;
+  FileApiData data;
   bool success;
+  FileApiError error;
 
   FileApiAuthResponse({this.data, this.success});
 
   FileApiAuthResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    error =
+        json['error'] != null ? new FileApiError.fromJson(json['error']) : null;
+    data = json['data'] != null ? new FileApiData.fromJson(json['data']) : null;
     success = json['success'];
   }
 
@@ -15,22 +18,41 @@ class FileApiAuthResponse {
       data['data'] = this.data.toJson();
     }
     data['success'] = this.success;
+    if (this.error != null) {
+      data['error'] = this.error.toJson();
+    }
     return data;
   }
 }
 
-class Data {
+class FileApiData {
   String sid;
 
-  Data({this.sid});
+  FileApiData({this.sid});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  FileApiData.fromJson(Map<String, dynamic> json) {
     sid = json['sid'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['sid'] = this.sid;
+    return data;
+  }
+}
+
+class FileApiError {
+  int code;
+
+  FileApiError({this.code});
+
+  FileApiError.fromJson(Map<String, dynamic> json) {
+    code = json['code'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['code'] = this.code;
     return data;
   }
 }

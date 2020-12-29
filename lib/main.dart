@@ -3,7 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:nas_app/Navigation/mainContainer.dart';
 import 'package:nas_app/Pages/logInPage.dart';
+
+import './globals.dart' as globals;
 
 void main() => runApp(MyApp());
 
@@ -14,6 +17,14 @@ class MyApp extends StatelessWidget {
         title: 'Home App',
         theme: ThemeData(
             primarySwatch: Colors.amber, scaffoldBackgroundColor: Colors.white),
-        home: LogInPage());
+        home: getHomePage());
+  }
+
+  Widget getHomePage() {
+    if (globals.user != null && globals.user.photoSessionId != null) {
+      return MainContainer();
+    } else {
+      return LogInPage();
+    }
   }
 }

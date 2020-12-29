@@ -1,6 +1,8 @@
-import 'package:nas_app/Model/AppPermissions.dart';
+import 'package:nas_app/Model/PhotoApiAuthResponse.dart';
 
 class User {
   String name;
-  AppPermissions permission;
+  String fileSessionId;
+  String photoSessionId;
+  PhotoApiPermission photoPermission;
 }
