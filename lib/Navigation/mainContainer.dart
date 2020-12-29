@@ -96,7 +96,11 @@ class _MainContainerState extends State<MainContainer> {
 
       case NavItem.imagePage:
         {
-          return new ImagesPage();
+          var albumId =
+              state.arguments != null ? state.arguments["albumId"] : null;
+          return new ImagesPage(
+            albumId: albumId,
+          );
         }
         break;
     }

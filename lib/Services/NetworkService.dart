@@ -5,7 +5,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 const String apiURL = "https://anfalt.de";
 
 class NetworkService {
-  static Dio dio = null;
+  static Dio dio;
   static final CookieJar cookieJar = new CookieJar();
 
   static Dio getDioInstance() {

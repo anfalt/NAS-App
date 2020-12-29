@@ -5,7 +5,7 @@ import "../Services/PhotoService.dart";
 import "../globals.dart" as globals;
 
 class ImageGalleryController {
-  List<Album> albumList;
+  List<Asset> albumList;
 
   final storage = new FlutterSecureStorage();
 
@@ -16,9 +16,9 @@ class ImageGalleryController {
   ImageGalleryController() {
     photoService = new PhotoService();
   }
-  Future<List<Album>> getAlbums() async {
+  Future<List<Asset>> getAlbums([String albumId]) async {
     AlbumApiResponse albumResp =
-        await photoService.getAlbumsRoot(globals.user.photoSessionId);
+        await photoService.getAlbums(globals.user.photoSessionId, albumId);
 
     if (!albumResp.success) {
       throw ("Fehler beim Laden der Alben: " + albumResp.error.code.toString());

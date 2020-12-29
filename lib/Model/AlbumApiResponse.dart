@@ -44,7 +44,7 @@ class AlbumApiError {
 class Data {
   int total;
   int offset;
-  List<Album> items;
+  List<Asset> items;
 
   Data({this.total, this.offset, this.items});
 
@@ -52,9 +52,9 @@ class Data {
     total = json['total'];
     offset = json['offset'];
     if (json['items'] != null) {
-      items = new List<Album>();
+      items = new List<Asset>();
       json['items'].forEach((v) {
-        items.add(new Album.fromJson(v));
+        items.add(new Asset.fromJson(v));
       });
     }
   }
@@ -70,16 +70,16 @@ class Data {
   }
 }
 
-class Album {
+class Asset {
   Info info;
   String id;
   String type;
   Additional additional;
   String thumbnailStatus;
 
-  Album({this.info, this.id, this.type, this.additional, this.thumbnailStatus});
+  Asset({this.info, this.id, this.type, this.additional, this.thumbnailStatus});
 
-  Album.fromJson(Map<String, dynamic> json) {
+  Asset.fromJson(Map<String, dynamic> json) {
     info = json['info'] != null ? new Info.fromJson(json['info']) : null;
     id = json['id'];
     type = json['type'];

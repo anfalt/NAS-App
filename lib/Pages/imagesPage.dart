@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:nas_app/Model/AlbumApiResponse.dart';
-import "package:responsive_grid/responsive_grid.dart";
+import 'package:nas_app/Widgets/Gallery/PhotoGallery.dart';
 
 import "../Controllers/ImageGalleryController.dart";
-import "../Widgets/Gallery/AlbumThumbnail.dart";
 
 class ImagesPage extends StatefulWidget {
+  final String albumId;
+  const ImagesPage({Key key, this.albumId}) : super(key: key);
   @override
   _ImagesPageState createState() => new _ImagesPageState();
 }
@@ -14,31 +15,23 @@ class _ImagesPageState extends State<ImagesPage> {
   static ImageGalleryController _imageGalleryController =
       new ImageGalleryController();
 
-  Future<List<Album>> _loadAssets = Future<List<Album>>(() async {
-    List<Album> result = await _imageGalleryController.getAlbums();
+  Future<List<Asset>> _loadAssets(ImagesPage widget) async {
+    List<Asset> result =
+        await _imageGalleryController.getAlbums(widget.albumId);
     return result;
-  });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: new FutureBuilder<List<Album>>(
-            future: _loadAssets,
-            builder: (context, AsyncSnapshot<List<Album>> snapshot) {
+        body: new FutureBuilder<List<Asset>>(
+            future: _loadAssets(widget),
+            builder: (context, AsyncSnapshot<List<Asset>> snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                return assetGrid(snapshot.data);
+                return PhotoGallery(assets: snapshot.data);
               } else {
                 return Center(child: CircularProgressIndicator());
               }
             }));
-  }
-
-  Widget assetGrid(List<Album> assets) {
-    return ResponsiveGridList(
-        desiredItemWidth: 150,
-        minSpacing: 10,
-        children: assets.map((asset) {
-          return AlbumThumbnail(asset: asset);
-        }).toList());
   }
 }

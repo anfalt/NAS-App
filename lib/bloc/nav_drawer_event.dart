@@ -12,5 +12,6 @@ abstract class NavDrawerEvent {
 // wants to change pages
 class NavigateTo extends NavDrawerEvent {
   final NavItem destination;
-  const NavigateTo(this.destination);
+  final Map<String, String> arguments;
+  const NavigateTo(this.destination, [this.arguments]);
 }

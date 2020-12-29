@@ -18,7 +18,7 @@ class NavDrawerBloc extends Bloc<NavDrawerEvent, NavDrawerState> {
     if (event is NavigateTo) {
       // only route to a new location if the new location is different
       if (event.destination != state.selectedItem) {
-        yield NavDrawerState(event.destination);
+        yield NavDrawerState(event.destination, event.arguments);
       }
     }
   }

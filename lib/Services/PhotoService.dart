@@ -15,8 +15,7 @@ class PhotoService {
     dio = NetworkService.getDioInstance();
   }
 
-  Future<AlbumApiResponse> getAlbumsRoot(String sessionId,
-      [String albumId]) async {
+  Future<AlbumApiResponse> getAlbums(String sessionId, [String albumId]) async {
     var url = "/photo/webapi/album.php";
     var queryParameters = {
       "api": "SYNO.PhotoStation.Album",
