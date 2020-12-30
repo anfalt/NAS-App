@@ -28,7 +28,7 @@ class AuthService {
       "enable_syno_token": "true"
     };
     FormData formData = FormData.fromMap(body);
-    PhotoApiAuthResponse apiResponse;
+    PhotoApiAuthResponse apiResponse = new PhotoApiAuthResponse();
     try {
       var response = await dio.post(
         url,
@@ -38,6 +38,9 @@ class AuthService {
       apiResponse = PhotoApiAuthResponse.fromJson(responseData);
     } catch (e) {
       print(e);
+      apiResponse.success = false;
+      apiResponse.error = new PhotoApiError();
+      apiResponse.error.message = e.toString();
     }
 
     return apiResponse;
@@ -56,13 +59,16 @@ class AuthService {
       "format": "cookie"
     };
 
-    FileApiAuthResponse apiResponse;
+    FileApiAuthResponse apiResponse = new FileApiAuthResponse();
     try {
       var response = await dio.get(url, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = FileApiAuthResponse.fromJson(responseData);
     } catch (e) {
       print(e);
+      apiResponse.success = false;
+      apiResponse.error = new FileApiError();
+      apiResponse.error.message = e.toString();
     }
 
     return apiResponse;

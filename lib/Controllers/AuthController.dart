@@ -32,10 +32,12 @@ class AuthController {
 
     if (!fileResp.success) {
       result.success = false;
-      result.errorMessage = fileResp.error.code.toString();
+      result.errorMessage =
+          fileResp.error.code.toString() + fileResp.error.message;
     } else if (!photoResp.success) {
       result.success = false;
-      result.errorMessage = photoResp.error.code.toString();
+      result.errorMessage =
+          photoResp.error.code.toString() + photoResp.error.message;
     } else {
       result.success = true;
       var user = new User();

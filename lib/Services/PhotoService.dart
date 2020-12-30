@@ -24,7 +24,8 @@ class PhotoService {
       "limit": 50,
       "type": "album,photo,video",
       "offset": 0,
-      "additional": "album_permission,thumb_size,file_location,item_count",
+      "additional":
+          "album_permission,thumb_size,file_location,item_count,video-Codec,video_quality",
       "SynoToken": sessionId
     };
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nas_app/Model/AlbumApiResponse.dart';
+import 'package:nas_app/Navigation/navDrawer.dart';
 import 'package:nas_app/Widgets/Gallery/PhotoGallery.dart';
 
 import "../Controllers/ImageGalleryController.dart";
@@ -12,6 +13,7 @@ class ImagesPage extends StatefulWidget {
 }
 
 class _ImagesPageState extends State<ImagesPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   static ImageGalleryController _imageGalleryController =
       new ImageGalleryController();
 
@@ -24,6 +26,11 @@ class _ImagesPageState extends State<ImagesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Text("Bilder"),
+        ),
+        drawer: NavDrawerWidget(),
         body: new FutureBuilder<List<Asset>>(
             future: _loadAssets(widget),
             builder: (context, AsyncSnapshot<List<Asset>> snapshot) {

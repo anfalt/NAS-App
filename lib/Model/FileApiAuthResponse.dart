@@ -43,6 +43,7 @@ class FileApiData {
 
 class FileApiError {
   int code;
+  String message;
 
   FileApiError({this.code});
 

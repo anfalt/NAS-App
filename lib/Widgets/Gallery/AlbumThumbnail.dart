@@ -1,10 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nas_app/Model/AlbumApiResponse.dart';
-import 'package:nas_app/bloc/nav_drawer_bloc.dart';
-import 'package:nas_app/bloc/nav_drawer_event.dart';
-import 'package:nas_app/bloc/nav_drawer_state.dart';
+import 'package:nas_app/Pages/imagesPage.dart';
 
 import "../../globals.dart" as globals;
 
@@ -26,8 +23,10 @@ class AlbumThumbnail extends StatelessWidget {
     // We're using a FutureBuilder since thumbData is a future
     return InkWell(
         onTap: () => {
-              BlocProvider.of<NavDrawerBloc>(context)
-                  .add(NavigateTo(NavItem.imagePage, {"albumId": asset.id}))
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ImagesPage(albumId: asset.id)))
             },
         child: Container(
           margin: EdgeInsets.all(5),
@@ -89,6 +88,7 @@ class AlbumThumbnail extends StatelessWidget {
           child: Column(verticalDirection: VerticalDirection.up, children: [
             ListTile(
               title: Text(asset.info.title),
+              subtitle: Text(asset.additional.itemCount.photo.toString()),
             )
           ]))
     ]);

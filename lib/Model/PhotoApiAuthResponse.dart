@@ -26,6 +26,7 @@ class PhotoApiAuthResponse {
 
 class PhotoApiError {
   int code;
+  String message;
 
   PhotoApiError({this.code});
 

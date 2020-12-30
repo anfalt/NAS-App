@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nas_app/Navigation/mainContainer.dart';
+import 'package:nas_app/Pages/homePage.dart';
 
 import '../Controllers/AuthController.dart';
 import '../Services/AuthService.dart';
@@ -29,7 +29,7 @@ class _LoginPageState extends State<LogInPage> {
             child: Text(
               'Anmelden',
               style: TextStyle(
-                  color: Colors.blue,
+                  color: Theme.of(context).primaryColor,
                   fontWeight: FontWeight.w500,
                   fontSize: 30),
             )),
@@ -59,7 +59,7 @@ class _LoginPageState extends State<LogInPage> {
             padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
             child: RaisedButton(
               textColor: Colors.white,
-              color: Colors.blue,
+              color: Theme.of(context).primaryColor,
               child: Text('Login'),
               onPressed: () {
                 _authController
@@ -69,13 +69,7 @@ class _LoginPageState extends State<LogInPage> {
                           if (!value.success)
                             {showLoginFailedDialog(context, value.errorMessage)}
                           else
-                            {
-                              Navigator.pushReplacement(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          new MainContainer()))
-                            }
+                            {Navigator.of(context).pushNamed("/")}
                         });
               },
             )),
@@ -106,10 +100,10 @@ class _LoginPageState extends State<LogInPage> {
                 future: _checkUserCredentialsFromStorage,
                 builder: (context, AsyncSnapshot<bool> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
-                    if (!snapshot.data) {
+                    if (snapshot.data == null || !snapshot.data) {
                       return loginWidget;
                     } else {
-                      return MainContainer();
+                      return HomePage();
                     }
                   } else {
                     return Center(child: CircularProgressIndicator());
