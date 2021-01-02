@@ -1,33 +1,32 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:nas_app/Model/AlbumApiResponse.dart';
-import 'package:nas_app/Pages/imagesPage.dart';
+import 'package:nas_app/Model/Asset.dart';
+import 'package:nas_app/Model/User.dart';
+import 'package:nas_app/Services/PhotoService.dart';
+import 'package:nas_app/redux/Asset/AssetStateAction.dart';
+import 'package:nas_app/redux/store.dart';
 
-import "../../globals.dart" as globals;
-
-class AlbumThumbnail extends StatelessWidget {
-  const AlbumThumbnail({
+class Album extends StatelessWidget {
+  const Album({
     Key key,
+    @required this.user,
     @required this.asset,
   }) : super(key: key);
-
-  final Asset asset;
+  final User user;
+  final AlbumAsset asset;
 
   @override
   Widget build(BuildContext context) {
     var thumbNailUrl;
     if (asset.thumbnailStatus != "default") {
-      thumbNailUrl = getThumbnailURL();
+      thumbNailUrl = asset.getSmallThumbURL(user);
     }
+
+    var themeData = Theme.of(context);
 
     // We're using a FutureBuilder since thumbData is a future
     return InkWell(
-        onTap: () => {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ImagesPage(albumId: asset.id)))
-            },
+        onTap: () => {openAlbum(asset.id)},
         child: Container(
           margin: EdgeInsets.all(5),
           decoration: BoxDecoration(
@@ -46,11 +45,12 @@ class AlbumThumbnail extends StatelessWidget {
                 ),
               ]),
           child: Card(
-              clipBehavior: Clip.antiAlias, child: cardStack(thumbNailUrl)),
+              clipBehavior: Clip.antiAlias,
+              child: cardStack(thumbNailUrl, themeData)),
         ));
   }
 
-  Widget cardStack(String thumbNailUrl) {
+  Widget cardStack(String thumbNailUrl, ThemeData themeData) {
     return Stack(children: [
       Container(
         height: 200,
@@ -60,8 +60,7 @@ class AlbumThumbnail extends StatelessWidget {
                 image: DecorationImage(
                     fit: BoxFit.cover,
                     image: CachedNetworkImageProvider(thumbNailUrl, headers: {
-                      "Cookie": "stay_login=0; PHPSESSID=" +
-                          globals.user.photoSessionId
+                      "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId
                     })));
           } else {
             return BoxDecoration(color: Colors.grey[350]);
@@ -71,7 +70,7 @@ class AlbumThumbnail extends StatelessWidget {
       Container(
           height: 200.0,
           decoration: BoxDecoration(
-              color: Colors.white,
+              color: asset.isMarked ? themeData.accentColor : Colors.white,
               gradient: LinearGradient(
                   begin: FractionalOffset.topCenter,
                   end: FractionalOffset.bottomCenter,
@@ -88,22 +87,34 @@ class AlbumThumbnail extends StatelessWidget {
           child: Column(verticalDirection: VerticalDirection.up, children: [
             ListTile(
               title: Text(asset.info.title),
-              subtitle: Text(asset.additional.itemCount.photo.toString()),
             )
-          ]))
+          ])),
+      Positioned(
+        top: 0.0,
+        right: 0.0,
+        child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: (() {
+              if (asset.isMarked) {
+                return Icon(Icons.check,
+                    color: themeData.accentIconTheme.color);
+              } else {
+                return Container();
+              }
+            }())),
+      )
     ]);
   }
 
-  void openAlbum(String albumId) {}
-
-  String getThumbnailURL() {
-    return "https://anfalt.de/photo/webapi/thumb.php?api=SYNO.PhotoStation.Thumb&method=get&version=1&size=small&id=" +
-        this.asset.id +
-        "&thumb_sig=" +
-        this.asset.additional.thumbSize.sig +
-        "&mtime=" +
-        this.asset.additional.thumbSize.small.mtime.toString() +
-        "&SynoToken=" +
-        globals.user.photoSessionId;
+  void openAlbum(String assetId) {
+    var store = Redux.store;
+    store.dispatch((store) => {
+          fetchAssetWithChildrenAction(
+              store,
+              new PhotoService(),
+              store.state.userState.user.photoSessionId,
+              asset.parentAsset,
+              assetId)
+        });
   }
 }

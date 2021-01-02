@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:nas_app/Model/FileApiAuthResponse.dart';
-import 'package:nas_app/Model/PhotoApiAuthResponse.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:nas_app/Model/ApiResponses/FileApiAuthResponse.dart';
+import 'package:nas_app/Model/ApiResponses/PhotoApiAuthResponse.dart';
 import 'package:nas_app/Model/User.dart';
 
 import './NetworkService.dart';
@@ -14,6 +15,40 @@ class AuthService {
 
   AuthService() {
     dio = NetworkService.getDioInstance();
+  }
+
+  Future<AuthenticationResult> authenticateUser(
+      String userName, String password) async {
+    AuthenticationResult result = new AuthenticationResult();
+    var defPhotoApiAuth = authenticateUserPhotoAPI(userName, password);
+    var defFileApiAuth = authenticateUserFileAPI(userName, password);
+    var apiResonpses = await Future.wait([defPhotoApiAuth, defFileApiAuth]);
+    PhotoApiAuthResponse photoResp = apiResonpses[0];
+    FileApiAuthResponse fileResp = apiResonpses[1];
+
+    if (!fileResp.success) {
+      result.success = false;
+      var errorCode = fileResp.error.code.toString();
+      var errorMessage = fileResp.error.message;
+      result.errorMessage = '$errorCode:$errorMessage';
+    } else if (!photoResp.success) {
+      result.success = false;
+      var errorCode = photoResp.error.code.toString();
+      var errorMessage = photoResp.error.message;
+      result.errorMessage = '$errorCode:$errorMessage';
+    } else {
+      result.success = true;
+      var user = new User();
+      user.name = photoResp.data.username;
+      user.photoSessionId = photoResp.data.sid;
+      user.photoPermission = photoResp.data.permission;
+      user.fileSessionId = fileResp.data.sid;
+
+      result.user = user;
+      await storeUserCredentials(userName, password);
+    }
+
+    return result;
   }
 
   Future<PhotoApiAuthResponse> authenticateUserPhotoAPI(
@@ -73,9 +108,17 @@ class AuthService {
 
     return apiResponse;
   }
+
+  Future<bool> storeUserCredentials(String username, String password) async {
+    final storage = new FlutterSecureStorage();
+    await storage.write(key: "userName", value: username);
+    await storage.write(key: "password", value: password);
+    return true;
+  }
 }
 
 class AuthenticationResult {
   String errorMessage;
   bool success;
+  User user;
 }

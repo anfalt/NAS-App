@@ -28,6 +28,7 @@ class AlbumApiResponse {
 
 class AlbumApiError {
   int code;
+  String message;
 
   AlbumApiError({this.code});
 

@@ -1,0 +1,85 @@
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+import 'package:nas_app/Widgets/FloatingActionButtons/FloatingActionButtonItem.dart';
+import 'package:nas_app/Widgets/FloatingActionButtons/UploadImageFloatingActionButton.dart';
+
+class ImageFloatingActionButton extends StatefulWidget {
+  final bool showManageActions;
+  ImageFloatingActionButton(this.showManageActions) : super();
+  @override
+  State createState() => new _ImageFloatingActionButtonState();
+}
+
+class _ImageFloatingActionButtonState extends State<ImageFloatingActionButton>
+    with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  List<FloatingActionButtonItem> actions;
+
+  @override
+  void initState() {
+    _controller = new AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    actions = [];
+    if (widget.showManageActions) {}
+    actions.add(UploadImageFloatingActionButton(null));
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: new List.generate(actions.length, (int index) {
+        Widget child = new Container(
+          height: 70.0,
+          width: 56.0,
+          alignment: FractionalOffset.topCenter,
+          child: new ScaleTransition(
+            scale: new CurvedAnimation(
+              parent: _controller,
+              curve: new Interval(0.0, 1.0 - index / actions.length / 2.0,
+                  curve: Curves.easeOut),
+            ),
+            child: new FloatingActionButton(
+              heroTag: null,
+              backgroundColor: Theme.of(context).backgroundColor,
+              mini: true,
+              child: new Icon(actions[index].icon,
+                  color: Theme.of(context).iconTheme.color),
+              onPressed: actions[index].onPressed,
+            ),
+          ),
+        );
+        return child;
+      }).toList()
+        ..add(
+          new FloatingActionButton(
+            heroTag: null,
+            child: new AnimatedBuilder(
+              animation: _controller,
+              builder: (BuildContext context, Widget child) {
+                return new Transform(
+                  transform:
+                      new Matrix4.rotationZ(_controller.value * 0.5 * math.pi),
+                  alignment: FractionalOffset.center,
+                  child: new Icon(
+                      _controller.isDismissed ? Icons.add : Icons.close),
+                );
+              },
+            ),
+            onPressed: () {
+              if (_controller.isDismissed) {
+                _controller.forward();
+              } else {
+                _controller.reverse();
+              }
+            },
+          ),
+        ),
+    );
+  }
+}

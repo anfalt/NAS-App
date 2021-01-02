@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:nas_app/Pages/homePage.dart';
+import 'package:nas_app/redux/User/UserAction.dart';
+import 'package:nas_app/redux/User/UserState.dart';
+import 'package:nas_app/redux/store.dart';
 
-import '../Controllers/AuthController.dart';
 import '../Services/AuthService.dart';
 
 class LogInPage extends StatefulWidget {
@@ -11,9 +14,9 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LogInPage> {
-  static AuthController _authController = new AuthController();
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  AuthService authService = new AuthService();
   Widget loginWidget;
 
   _LoginPageState() {
@@ -29,7 +32,7 @@ class _LoginPageState extends State<LogInPage> {
             child: Text(
               'Anmelden',
               style: TextStyle(
-                  color: Theme.of(context).primaryColor,
+                  color: Colors.blue,
                   fontWeight: FontWeight.w500,
                   fontSize: 30),
             )),
@@ -59,56 +62,48 @@ class _LoginPageState extends State<LogInPage> {
             padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
             child: RaisedButton(
               textColor: Colors.white,
-              color: Theme.of(context).primaryColor,
+              color: Colors.blue,
               child: Text('Login'),
               onPressed: () {
-                _authController
-                    .authenticateUser(
-                        nameController.text, passwordController.text)
-                    .then((value) => {
-                          if (!value.success)
-                            {showLoginFailedDialog(context, value.errorMessage)}
-                          else
-                            {Navigator.of(context).pushNamed("/")}
-                        });
+                Redux.store.dispatch((store) => {
+                      fetchUserAction(store, authService, nameController.text,
+                          passwordController.text)
+                    });
               },
             )),
       ],
     );
   }
 
-  Future<bool> _checkUserCredentialsFromStorage = Future<bool>(() async {
-    final storage = new FlutterSecureStorage();
-    var userName = await storage.read(key: "userName");
-    var password = await storage.read(key: "password");
-    AuthenticationResult result;
-    if (userName != null && password != null) {
-      result = await _authController.authenticateUser(userName, password);
-    } else {
-      return false;
-    }
-
-    return result.success;
-  });
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Padding(
-            padding: EdgeInsets.all(10),
-            child: new FutureBuilder<bool>(
-                future: _checkUserCredentialsFromStorage,
-                builder: (context, AsyncSnapshot<bool> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.data == null || !snapshot.data) {
-                      return loginWidget;
+    return StoreConnector<AppState, UserState>(
+        converter: (store) => store.state.userState,
+        onInit: (store) => store.dispatch(
+            (store) => {fetchUserActionFromStorage(store, authService)}),
+        builder: (context, userState) {
+          return Scaffold(
+              body: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: (() {
+                    if (!userState.isLoading) {
+                      if (userState.isError) {
+                        SchedulerBinding.instance.addPostFrameCallback((_) {
+                          showLoginFailedDialog(
+                              context, userState.errorMessage);
+                        });
+                      }
+                      if (userState.user == null ||
+                          !userState.credentialsInStorage) {
+                        return loginWidget;
+                      } else {
+                        return HomePage();
+                      }
                     } else {
-                      return HomePage();
+                      return Center(child: CircularProgressIndicator());
                     }
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                })));
+                  }())));
+        });
   }
 
   showLoginFailedDialog(BuildContext context, String message) {
@@ -122,7 +117,7 @@ class _LoginPageState extends State<LogInPage> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Login failed"),
+      title: Text("Anmeldung fehlgeschlagen"),
       content: Text(message),
       actions: [
         okButton,

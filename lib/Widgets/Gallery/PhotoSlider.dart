@@ -1,19 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:nas_app/Model/AlbumApiResponse.dart';
+import 'package:nas_app/Model/Asset.dart';
+import 'package:nas_app/Model/User.dart';
 
-import "../../globals.dart" as globals;
+import "VideoPlayerSlide.dart";
 
 class PhotoSlider extends StatelessWidget {
   const PhotoSlider({
     Key key,
     @required this.currentAssetIndex,
     @required this.imagesForSlider,
+    @required this.user,
   }) : super(key: key);
 
   final int currentAssetIndex;
-  final List<Asset> imagesForSlider;
+  final User user;
+  final List<AlbumAsset> imagesForSlider;
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +41,15 @@ class PhotoSlider extends StatelessWidget {
               carouselController: carouselController,
               options: carouselOptions,
               itemCount: imagesForSlider.length,
-              itemBuilder: (BuildContext context, int itemIndex) => Container(
-                child: photoSliderItem(context, imagesForSlider[itemIndex]),
-              ),
+              itemBuilder: (BuildContext context, int itemIndex) =>
+                  Container(child: () {
+                if (imagesForSlider[itemIndex].type == "photo") {
+                  return photoSliderItem(
+                      context, imagesForSlider[itemIndex], user);
+                } else if (imagesForSlider[itemIndex].type == "video") {
+                  return videoSliderItem(context, imagesForSlider[itemIndex]);
+                }
+              }()),
             ),
             Container(
               width: getScreenWidth,
@@ -69,12 +78,11 @@ class PhotoSlider extends StatelessWidget {
         ));
   }
 
-  Widget photoSliderItem(BuildContext context, Asset asset) {
-    var imageUrl = getImageURL(asset);
-    var downloadUrl = getDownloadUrl(asset);
+  Widget photoSliderItem(BuildContext context, AlbumAsset asset, User user) {
+    var imageUrl = asset.getLargeThumbUrl(user);
     return CachedNetworkImage(
         httpHeaders: {
-          "Cookie": "stay_login=0; PHPSESSID=" + globals.user.photoSessionId
+          "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId
         },
         imageUrl: imageUrl,
         progressIndicatorBuilder: (context, url, downloadProgress) => Container(
@@ -85,23 +93,11 @@ class PhotoSlider extends StatelessWidget {
         errorWidget: (context, url, error) => Icon(Icons.error));
   }
 
-  String getImageURL(Asset asset) {
-    return "https://anfalt.de/photo/webapi/thumb.php?api=SYNO.PhotoStation.Thumb&method=get&version=1&size=large&id=" +
-        asset.id +
-        "&thumb_sig=" +
-        asset.additional.thumbSize.sig +
-        "&mtime=" +
-        asset.additional.thumbSize.large.mtime.toString() +
-        "&SynoToken=" +
-        globals.user.photoSessionId;
-  }
-
-  String getDownloadUrl(Asset asset) {
-    return "https://anfalt.de/photo/webapi/download.php1.mp4?api=SYNO.PhotoStation.Download&method=getvideo&version=1&id=" +
-        asset.id +
-        "&quality_id=" +
-        asset.additional.thumbSize.sig +
-        "&SynoToken=" +
-        globals.user.photoSessionId;
+  Widget videoSliderItem(BuildContext context, AlbumAsset asset) {
+    var downloadUrls = asset.getVideoDownloadUrls(user);
+    return VideoPlayerSlide(
+      videoUrls: downloadUrls,
+      user: user,
+    );
   }
 }

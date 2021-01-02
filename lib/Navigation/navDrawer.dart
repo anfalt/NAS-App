@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nas_app/Pages/logInPage.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:nas_app/Model/User.dart';
+import 'package:nas_app/redux/User/UserAction.dart';
+import 'package:nas_app/redux/User/UserState.dart';
+import 'package:nas_app/redux/store.dart';
 
-import "../globals.dart" as globals;
 import '../settings.dart' as settings;
 
 class NavDrawerWidget extends StatelessWidget {
-  void logoutUser(BuildContext context) {
-    final storage = new FlutterSecureStorage();
-    List<Future<void>> futures = [];
-    futures.add(storage.delete(key: "userName"));
-    futures.add(storage.delete(key: "password"));
-
-    Future.wait(futures).then((values) => {
-          globals.user = null,
-          Navigator.pushReplacement(
-              context,
-              new MaterialPageRoute(
-                  builder: (BuildContext context) => new LogInPage()))
-        });
+  void logoutUser(
+    BuildContext context,
+  ) {
+    Redux.store.dispatch(fetchUserLogOutAction);
   }
 
   @override
@@ -26,29 +19,34 @@ class NavDrawerWidget extends StatelessWidget {
     var navItems = settings.routes.keys.map(getNavItemForRoute).toList();
     navItems.insert(0, _NavigationItem(true, null, null, null));
 
-    return Drawer(
-      // Add a ListView to the drawer. This ensures the user can scroll
-      // through the options in the drawer if there isn't enough vertical
-      // space to fit everything.
-      child: Container(
-          color: Colors.white,
-          child: ListView.builder(
-            padding: EdgeInsets.zero,
-            itemCount: navItems.length,
-            itemBuilder: (BuildContext context, int index) =>
-                _buildItem((navItems[index]), context),
-          )),
-    );
+    return StoreConnector<AppState, UserState>(
+        converter: (store) => store.state.userState,
+        builder: (context, userState) {
+          return Drawer(
+            // Add a ListView to the drawer. This ensures the user can scroll
+            // through the options in the drawer if there isn't enough vertical
+            // space to fit everything.
+            child: Container(
+                color: Colors.white,
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: navItems.length,
+                  itemBuilder: (BuildContext context, int index) =>
+                      _buildItem((navItems[index]), context, userState.user),
+                )),
+          );
+        });
   }
 
-  Widget _buildItem(_NavigationItem data, BuildContext context) => data.header
-      // if the item is a header return the header widget
-      ? _makeHeaderItem(context)
-      // otherwise build and return the default list item
-      : _makeListItem(data, context);
+  Widget _buildItem(_NavigationItem data, BuildContext context, User user) =>
+      data.header
+          // if the item is a header return the header widget
+          ? _makeHeaderItem(context, user)
+          // otherwise build and return the default list item
+          : _makeListItem(data, context);
 
-  Widget _makeHeaderItem(BuildContext context) {
-    var name = globals.user != null ? globals.user.name : "";
+  Widget _makeHeaderItem(BuildContext context, User user) {
+    var name = user != null ? user.name : "";
     return Container(
         height: 100,
         child: DrawerHeader(

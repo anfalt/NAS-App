@@ -1,4 +1,4 @@
-import 'package:nas_app/Model/PhotoApiAuthResponse.dart';
+import 'package:nas_app/Model/ApiResponses/PhotoApiAuthResponse.dart';
 
 class User {
   String name;
