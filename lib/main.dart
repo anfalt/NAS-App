@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
                 primaryColor: Colors.blue[700],
                 accentColor: Colors.amber,
                 scaffoldBackgroundColor: Colors.white),
-            initialRoute: '/',
+            initialRoute: '/home',
             routes: settings.routes));
   }
 }

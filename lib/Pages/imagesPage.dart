@@ -14,6 +14,7 @@ import 'package:nas_app/redux/Asset/AssetStateAction.dart';
 import 'package:nas_app/redux/User/UserState.dart';
 import 'package:nas_app/redux/store.dart';
 import 'package:open_file/open_file.dart';
+import 'package:redux/redux.dart';
 
 class ImagesPage extends StatefulWidget {
   final String albumId;
@@ -28,7 +29,7 @@ class _ImagesPageState extends State<ImagesPage> {
   PhotoService photoService = new PhotoService();
   @override
   void initState() {
-    fileService = new FileService(_onSelectNotification);
+    fileService = new FileService();
     super.initState();
   }
 
@@ -138,8 +139,25 @@ class _ImagesPageState extends State<ImagesPage> {
       appBarActions.add(IconButton(
           icon: Icon(Icons.download_sharp),
           onPressed: () => {downloadAssets(markedAssets, userState)}));
+
+      appBarActions.add(IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: () => {deleteAssets(markedAssets, userState)}));
     }
+
+    appBarActions.add(IconButton(
+        icon: Icon(Icons.refresh), onPressed: () => {reloadAsset(userState)}));
     return appBarActions;
+  }
+
+  void reloadAsset(UserState userState) {
+    Redux.store.dispatch((Store<AppState> store) =>
+        fetchAssetWithChildrenAction(
+            store,
+            photoService,
+            userState.user.photoSessionId,
+            store.state.assetState.asset.parentAsset,
+            store.state.assetState.asset.id));
   }
 
   void downloadAssets(Iterable<AlbumAsset> assets, UserState userState) {
@@ -148,20 +166,70 @@ class _ImagesPageState extends State<ImagesPage> {
       var fileName = element.additional.fileLocation;
       if (element.type == "video") {
         downloadUrl = element.getVideoDownloadUrls(userState.user).values.first;
-        fileService.download(fileName, downloadUrl, "GET");
+        fileService.download(
+            fileName, downloadUrl, "GET", _onSelectNotificationDownload);
       } else if (element.type == "photo") {
         downloadUrl = element.getImageDownloadUrl(userState.user);
         var body = element.getImageDownloadBody(userState.user);
-        fileService.download(fileName, downloadUrl, "POST", body);
+        fileService.download(
+            fileName, downloadUrl, "POST", _onSelectNotificationDownload, body);
       }
     });
   }
 
-  Future<void> _onSelectNotification(String json) async {
+  void deleteAssets(Iterable<AlbumAsset> assets, UserState userState) {
+    var photoAndVideoAssetIds = assets
+        .where((element) => element.type == "photo" || element.type == "video")
+        .map((el) => el.id)
+        .toList();
+
+    var albumAssets =
+        assets.where((element) => element.type == "album").toList();
+
+    if (albumAssets.length > 0) {
+      List<String> albumsToDelete = [];
+      albumAssets.forEach((element) {
+        if (element.additional.itemCount.photo > 0 ||
+            element.additional.itemCount.video > 0) {
+          showFailedDialog(
+              context,
+              "Album '" +
+                  element.info.name +
+                  "' enthält Bilder oder Videos und wird nicht gelöscht");
+        } else {
+          albumsToDelete.add(element.id);
+        }
+      });
+      photoService.deleteAlbum(albumsToDelete.toList(), userState.user.name,
+          _onSelectNotificationDelete);
+    }
+
+    if (photoAndVideoAssetIds.length > 0) {
+      photoService.deletePhoto(photoAndVideoAssetIds, userState.user.name,
+          _onSelectNotificationDelete);
+    }
+  }
+
+  Future<void> _onSelectNotificationDownload(String json) async {
+    final obj = jsonDecode(json);
+
+    if (obj['success']) {
+      OpenFile.open(obj['filePath']);
+    } else {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Error'),
+          content: Text('${obj['error']}'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onSelectNotificationDelete(String json) async {
     final obj = jsonDecode(json);
 
     if (obj['isSuccess']) {
-      OpenFile.open(obj['filePath']);
     } else {
       showDialog(
         context: context,

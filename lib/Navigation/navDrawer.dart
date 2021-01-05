@@ -12,6 +12,7 @@ class NavDrawerWidget extends StatelessWidget {
     BuildContext context,
   ) {
     Redux.store.dispatch(fetchUserLogOutAction);
+    Navigator.of(context).pushNamed("/home");
   }
 
   @override
@@ -105,8 +106,8 @@ class NavDrawerWidget extends StatelessWidget {
 
 _NavigationItem getNavItemForRoute(String route) {
   switch (route) {
-    case "/":
-      return _NavigationItem(false, "/", "Start", Icons.home);
+    case "/home":
+      return _NavigationItem(false, "/home", "Start", Icons.home);
     case "/images":
       return _NavigationItem(false, "/images", "Bilder", Icons.image);
     case "/calendar":

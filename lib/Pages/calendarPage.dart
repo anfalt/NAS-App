@@ -4,7 +4,7 @@ class CalendarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("Kalender"),
+      body: Container(child: Text("Kalender")),
     );
   }
 }

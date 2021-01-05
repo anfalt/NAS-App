@@ -26,11 +26,16 @@ class Album extends StatelessWidget {
 
     // We're using a FutureBuilder since thumbData is a future
     return InkWell(
+        onLongPress: () => {
+              Redux.store.dispatch(
+                  (store) => {fetchAssetMarkedAction(store, asset.id)})
+            },
         onTap: () => {openAlbum(asset.id)},
         child: Container(
           margin: EdgeInsets.all(5),
           decoration: BoxDecoration(
-              color: Colors.white,
+              color:
+                  asset.isMarked ? Theme.of(context).accentColor : Colors.white,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),

@@ -48,6 +48,17 @@ class AlbumAsset extends Asset {
         user.photoSessionId;
   }
 
+  String getPreviewThumbURL(User user) {
+    return "https://anfalt.de/photo/webapi/thumb.php?api=SYNO.PhotoStation.Thumb&method=get&version=1&size=preview&id=" +
+        this.id +
+        "&thumb_sig=" +
+        this.additional.thumbSize.sig +
+        "&mtime=" +
+        this.additional.thumbSize.preview.mtime.toString() +
+        "&SynoToken=" +
+        user.photoSessionId;
+  }
+
   String getImageDownloadUrl(User user) {
     var url = "https://anfalt.de/photo/webapi/download.php?SynoToken=" +
         user.photoSessionId;

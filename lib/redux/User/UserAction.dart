@@ -13,18 +13,19 @@ class SetUserStateAction {
   SetUserStateAction(this.userState);
 }
 
-Future<void> fetchUserLogOutAction(
-    Store<AppState> store, AuthService authService) async {
+Future<void> fetchUserLogOutAction(Store<AppState> store) async {
   store.dispatch(SetUserStateAction(UserState(isLoading: true)));
 
   try {
     final storage = new FlutterSecureStorage();
     await storage.delete(key: "userName");
     await storage.delete(key: "password");
+    var newUser = store.state.userState.user;
+    newUser.photoSessionId = null;
 
-    SetUserStateAction(
-      UserState(isLoading: false, credentialsInStorage: false, user: null),
-    );
+    store.dispatch(SetUserStateAction(
+      UserState(isLoading: false, credentialsInStorage: false, user: newUser),
+    ));
   } catch (error) {
     store.dispatch(SetUserStateAction(
         UserState(isLoading: false, credentialsInStorage: false, user: null)));

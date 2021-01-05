@@ -1,11 +1,16 @@
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:nas_app/Services/PhotoService.dart';
+import 'package:nas_app/Widgets/FloatingActionButtons/CreateAlbumActionbutton.dart';
 import 'package:nas_app/Widgets/FloatingActionButtons/FloatingActionButtonItem.dart';
 import 'package:nas_app/Widgets/FloatingActionButtons/UploadImageFloatingActionButton.dart';
+import 'package:nas_app/Widgets/FloatingActionButtons/UploadVideoActionButton.dart';
 
 class ImageFloatingActionButton extends StatefulWidget {
   final bool showManageActions;
+  final PhotoService photoService = new PhotoService();
   ImageFloatingActionButton(this.showManageActions) : super();
   @override
   State createState() => new _ImageFloatingActionButtonState();
@@ -29,8 +34,11 @@ class _ImageFloatingActionButtonState extends State<ImageFloatingActionButton>
   @override
   Widget build(BuildContext context) {
     actions = [];
-    if (widget.showManageActions) {}
-    actions.add(UploadImageFloatingActionButton(null));
+    if (widget.showManageActions) {
+      actions.add(CreateAlbumFloatingActionButton(onSelectNotificationUpload));
+      actions.add(UploadVideoFloatingActionButton(onSelectNotificationUpload));
+      actions.add(UploadImageFloatingActionButton(onSelectNotificationUpload));
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: new List.generate(actions.length, (int index) {
@@ -50,7 +58,7 @@ class _ImageFloatingActionButtonState extends State<ImageFloatingActionButton>
               mini: true,
               child: new Icon(actions[index].icon,
                   color: Theme.of(context).iconTheme.color),
-              onPressed: actions[index].onPressed,
+              onPressed: () => {actions[index].onPressed(context)},
             ),
           ),
         );
@@ -81,5 +89,20 @@ class _ImageFloatingActionButtonState extends State<ImageFloatingActionButton>
           ),
         ),
     );
+  }
+
+  Future<void> onSelectNotificationUpload(String json) async {
+    final obj = jsonDecode(json);
+
+    if (obj['success']) {
+    } else {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Error'),
+          content: Text('${obj['error']}'),
+        ),
+      );
+    }
   }
 }

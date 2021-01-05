@@ -27,16 +27,24 @@ class _VideoPlayerSlideState extends State<VideoPlayerSlide> {
     ThemeData theme = Theme.of(context);
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(
-            controlsConfiguration: BetterPlayerControlsConfiguration(
-                enableSkips: false,
-                enableSubtitles: false,
-                enableQualities: true,
-                enableOverflowMenu: true,
-                iconsColor: theme.iconTheme.color,
-                controlBarColor: theme.backgroundColor),
-            autoDetectFullscreenDeviceOrientation: true),
+          controlsConfiguration: BetterPlayerControlsConfiguration(
+              enableSkips: false,
+              enableSubtitles: false,
+              enableQualities: true,
+              enableOverflowMenu: true,
+              iconsColor: theme.iconTheme.color,
+              controlBarColor: theme.backgroundColor),
+          autoDetectFullscreenDeviceOrientation: true,
+          fit: BoxFit.contain,
+        ),
         betterPlayerDataSource: betterPlayerDataSource);
 
-    return BetterPlayer(controller: _betterPlayerController);
+    return WillPopScope(
+      child: BetterPlayer(controller: _betterPlayerController),
+      onWillPop: () {
+        _betterPlayerController.pause();
+        return Future.value(true);
+      },
+    );
   }
 }

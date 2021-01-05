@@ -20,7 +20,15 @@ class Photo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var imageUrl = asset.getSmallThumbURL(user);
+    var imageUrl;
+    if (asset.thumbnailStatus.contains("small")) {
+      imageUrl = asset.getSmallThumbURL(user);
+    } else if (asset.thumbnailStatus.contains("preview")) {
+      imageUrl = asset.getPreviewThumbURL(user);
+    } else if (asset.thumbnailStatus.contains("large")) {
+      imageUrl = asset.getSmallThumbURL(user);
+    }
+
     var currentAssetIndex =
         imagesForSlider.indexWhere((note) => note.id == asset.id);
     // We're using a FutureBuilder since thumbData is a future
@@ -60,21 +68,7 @@ class Photo extends StatelessWidget {
           child: Card(
               clipBehavior: Clip.antiAlias,
               child: Stack(children: [
-                CachedNetworkImage(
-                  httpHeaders: {
-                    "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId
-                  },
-                  imageUrl: imageUrl,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      Container(
-                          padding: EdgeInsets.only(top: 10, bottom: 10),
-                          child: LinearProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(
-                                Theme.of(context).accentColor),
-                            value: downloadProgress.progress,
-                          )),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                ),
+                getThumbNail(imageUrl),
                 Positioned(
                   top: 0.0,
                   right: 0.0,
@@ -91,5 +85,31 @@ class Photo extends StatelessWidget {
                 )
               ])),
         ));
+  }
+
+  Widget getThumbNail(String thumbNailUrl) {
+    if (thumbNailUrl != null) {
+      try {
+        return CachedNetworkImage(
+          httpHeaders: {
+            "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId
+          },
+          imageUrl: thumbNailUrl,
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+              Container(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                  child: LinearProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation(Theme.of(context).accentColor),
+                    value: downloadProgress.progress,
+                  )),
+          errorWidget: (context, url, error) => Icon(Icons.error),
+        );
+      } catch (e) {
+        return Icon(Icons.error);
+      }
+    } else {
+      return Container();
+    }
   }
 }

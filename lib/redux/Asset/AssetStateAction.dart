@@ -1,6 +1,8 @@
 import 'package:meta/meta.dart';
 import 'package:nas_app/Model/Asset.dart';
+import 'package:nas_app/Services/AuthService.dart';
 import 'package:nas_app/Services/PhotoService.dart';
+import 'package:nas_app/redux/User/UserAction.dart';
 import 'package:redux/redux.dart';
 
 import '../store.dart';
@@ -38,14 +40,21 @@ Future<void> fetchAssetWithChildrenAction(
 
   try {
     var assetResp = await photoService.getAssets(sessionId, assetId);
+
     if (!assetResp.success) {
-      throw ("Fehler beim Laden der Alben: " +
-          (assetResp.error.code != null
-              ? assetResp.error.code.toString()
-              : "") +
-          (assetResp.error.message != null
-              ? assetResp.error.message.toString()
-              : ""));
+      if (assetResp.error != null && assetResp.error.code == 417) {
+        Redux.store.dispatch(
+            (store) => fetchUserActionFromStorage(store, new AuthService()));
+        return;
+      } else {
+        throw ("Fehler beim Laden der Alben: " +
+            (assetResp.error.code != null
+                ? assetResp.error.code.toString()
+                : "") +
+            (assetResp.error.message != null
+                ? assetResp.error.message.toString()
+                : ""));
+      }
     }
 
     var albumInfoResp = await photoService.getAlbumInfo(sessionId, assetId);
