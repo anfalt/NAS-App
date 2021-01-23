@@ -7,7 +7,7 @@ import 'package:nas_app/Model/Asset.dart';
 import 'package:nas_app/Navigation/navDrawer.dart';
 import 'package:nas_app/Services/FileService.dart';
 import 'package:nas_app/Services/PhotoService.dart';
-import 'package:nas_app/Widgets/FloatingActionButtons/ImageFloatingActionButton.dart';
+import 'package:nas_app/Widgets/FloatingActionButtons/ImagePage/ImageFloatingActionButton.dart';
 import 'package:nas_app/Widgets/Gallery/PhotoGallery.dart';
 import 'package:nas_app/redux/Asset/AssetState.dart';
 import 'package:nas_app/redux/Asset/AssetStateAction.dart';
@@ -24,7 +24,7 @@ class ImagesPage extends StatefulWidget {
 }
 
 class _ImagesPageState extends State<ImagesPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  TextEditingController _textController = new TextEditingController();
   FileService fileService;
   PhotoService photoService = new PhotoService();
   @override
@@ -47,7 +47,6 @@ class _ImagesPageState extends State<ImagesPage> {
             }),
         builder: (context, appState) {
           return Scaffold(
-              key: _scaffoldKey,
               appBar: AppBar(
                 title: Text(getAppBarText(appState.assetState)),
                 actions:
@@ -145,6 +144,13 @@ class _ImagesPageState extends State<ImagesPage> {
           onPressed: () => {deleteAssets(markedAssets, userState)}));
     }
 
+    if (markedAssets.length == 1) {
+      appBarActions.add(IconButton(
+          icon: Icon(Icons.edit),
+          onPressed: () =>
+              {displayAlbumEditDialog(context, markedAssets.toList()[0])}));
+    }
+
     appBarActions.add(IconButton(
         icon: Icon(Icons.refresh), onPressed: () => {reloadAsset(userState)}));
     return appBarActions;
@@ -239,5 +245,40 @@ class _ImagesPageState extends State<ImagesPage> {
         ),
       );
     }
+  }
+
+  void displayAlbumEditDialog(BuildContext context, AlbumAsset markedAsset) {
+    _textController.text = markedAsset.info.title;
+    var dialog = new Dialog(
+        child: Padding(
+            padding: EdgeInsets.all(10),
+            child: new Container(
+                height: 100,
+                child: ListView(
+                  children: <Widget>[
+                    new TextField(
+                      decoration: new InputDecoration(hintText: "Album Name"),
+                      controller: _textController,
+                    ),
+                    new FlatButton(
+                      child: new Text("Speichern "),
+                      onPressed: () {
+                        updateAlbum(markedAsset.id, _textController.text);
+                        Navigator.pop(context);
+                      },
+                    )
+                  ],
+                ))));
+
+    showDialog(context: context, builder: (_) => dialog);
+  }
+
+  void updateAlbum(String assetId, String newAlbumName) {
+    photoService.updateAlbum(
+        assetId,
+        newAlbumName,
+        Redux.store.state.userState.user.name,
+        Redux.store.state.userState.user.photoSessionId,
+        _onSelectNotificationDelete);
   }
 }

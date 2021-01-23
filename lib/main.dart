@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:nas_app/Controllers/PushNotificationController.dart';
 import 'package:nas_app/redux/store.dart';
 
 import './settings.dart' as settings;
@@ -12,6 +13,7 @@ void main() async {
   await Redux.init();
 
   runApp(MyApp());
+  new PushNotificationsManager().init();
 }
 
 class MyApp extends StatelessWidget {

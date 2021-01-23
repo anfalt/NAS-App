@@ -110,8 +110,8 @@ _NavigationItem getNavItemForRoute(String route) {
       return _NavigationItem(false, "/home", "Start", Icons.home);
     case "/images":
       return _NavigationItem(false, "/images", "Bilder", Icons.image);
-    case "/calendar":
-      return _NavigationItem(false, "/calendar", "Start", Icons.event);
+    case "/lists":
+      return _NavigationItem(false, "/lists", "Listen", Icons.fact_check);
     default:
       return _NavigationItem(true, "/home", "Start", Icons.home);
   }

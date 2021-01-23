@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:meta/meta.dart';
+import 'package:nas_app/redux/List/ListState.dart';
+import 'package:nas_app/redux/List/ListStateAction.dart';
+import 'package:nas_app/redux/List/ListStateReducer.dart';
 import 'package:nas_app/redux/User/UserAction.dart';
 import 'package:nas_app/redux/User/UserState.dart';
 import 'package:nas_app/redux/User/UserStateReducer.dart';
@@ -18,6 +21,9 @@ AppState appReducer(AppState state, dynamic action) {
   } else if (action is SetUserStateAction) {
     final nextUserState = userReducer(state.userState, action);
     return state.copyWith(userState: nextUserState);
+  } else if (action is SetListsStateAction) {
+    final nextListState = listsReducer(state.listState, action);
+    return state.copyWith(listState: nextListState);
   }
 
   return state;
@@ -27,20 +33,20 @@ AppState appReducer(AppState state, dynamic action) {
 class AppState {
   final AssetState assetState;
   final UserState userState;
+  final ListState listState;
 
   AppState({
     @required this.assetState,
     @required this.userState,
+    @required this.listState,
   });
 
-  AppState copyWith({
-    AssetState assetState,
-    UserState userState,
-  }) {
+  AppState copyWith(
+      {AssetState assetState, UserState userState, ListState listState}) {
     return AppState(
-      assetState: assetState ?? this.assetState,
-      userState: userState ?? this.userState,
-    );
+        assetState: assetState ?? this.assetState,
+        userState: userState ?? this.userState,
+        listState: listState ?? this.listState);
   }
 }
 
@@ -58,12 +64,15 @@ class Redux {
   static Future<void> init() async {
     final assetStateInitial = AssetState.initial();
     final userStateInitialState = UserState.initial();
+    final listStateIntialState = ListState.initial();
 
     _store = Store<AppState>(
       appReducer,
       middleware: [thunkMiddleware],
       initialState: AppState(
-          assetState: assetStateInitial, userState: userStateInitialState),
+          assetState: assetStateInitial,
+          userState: userStateInitialState,
+          listState: listStateIntialState),
     );
   }
 }

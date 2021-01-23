@@ -219,6 +219,44 @@ class PhotoService {
     return apiResponse;
   }
 
+  Future<AlbumApiResponse> updateAlbum(
+      String assetId,
+      String albunName,
+      String userName,
+      String sessionId,
+      Future<void> Function(String) onSelectNotification) async {
+    initNotificationsPlugin(onSelectNotification);
+    var url = "/photo/webapi/album.php";
+
+    dynamic formdata = {
+      "id": assetId,
+      "api": "SYNO.PhotoStation.Album",
+      "method": "edit",
+      "version": 1,
+      "ps_username": userName,
+      "title": albunName
+    };
+
+    AlbumApiResponse apiResponse = new AlbumApiResponse();
+    try {
+      var response = await dio.post(url,
+          data: formdata,
+          options: Options(
+              contentType: "application/x-www-form-urlencoded",
+              headers: {"X-SYNO-TOKEN": sessionId}));
+      var responseData = jsonDecode(response.data);
+      apiResponse = AlbumApiResponse.fromJson(responseData);
+      _showNotificationUpdate(apiResponse.toJson());
+    } catch (e) {
+      print(e);
+      apiResponse.success = false;
+      apiResponse.error = new AlbumApiError();
+      apiResponse.error.message = e.toString();
+    }
+
+    return apiResponse;
+  }
+
   Future<AlbumApiResponse> deletePhoto(List<String> assetIds, String userName,
       Future<void> Function(String) onSelectNotification) async {
     initNotificationsPlugin(onSelectNotification);
@@ -315,6 +353,29 @@ class PhotoService {
         isSuccess
             ? 'File ' + fileName + ' has been uploaded successfully!'
             : 'There was an error while uploaded the file.',
+        platform,
+        payload: json);
+  }
+
+  Future<void> _showNotificationUpdate(
+      Map<String, dynamic> uploadStatus) async {
+    final android = localNot.AndroidNotificationDetails(
+        'channel id', 'channel name', 'channel description',
+        priority: localNot.Priority.high, importance: localNot.Importance.max);
+    final iOS = localNot.IOSNotificationDetails();
+    final platform =
+        new localNot.NotificationDetails(android: android, iOS: iOS);
+
+    final json = jsonEncode(uploadStatus);
+
+    final isSuccess = uploadStatus['success'];
+
+    await flutterLocalNotificationsPlugin.show(
+        Random().nextInt(100), // notification id
+        isSuccess ? 'Success' : 'Failure',
+        isSuccess
+            ? 'Albumhas been updated successfully!'
+            : 'There was an error while updating the album.',
         platform,
         payload: json);
   }

@@ -3,10 +3,10 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:nas_app/Services/PhotoService.dart';
-import 'package:nas_app/Widgets/FloatingActionButtons/CreateAlbumActionbutton.dart';
+import 'package:nas_app/Widgets/FloatingActionButtons/ImagePage/CreateAlbumActionbutton.dart';
 import 'package:nas_app/Widgets/FloatingActionButtons/FloatingActionButtonItem.dart';
-import 'package:nas_app/Widgets/FloatingActionButtons/UploadImageFloatingActionButton.dart';
-import 'package:nas_app/Widgets/FloatingActionButtons/UploadVideoActionButton.dart';
+import 'package:nas_app/Widgets/FloatingActionButtons/ImagePage/UploadImageFloatingActionButton.dart';
+import 'package:nas_app/Widgets/FloatingActionButtons/ImagePage/UploadVideoActionButton.dart';
 
 class ImageFloatingActionButton extends StatefulWidget {
   final bool showManageActions;
