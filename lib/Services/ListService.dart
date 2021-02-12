@@ -139,7 +139,6 @@ class ListService {
           await dio.post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = ListApiResponse.fromJson(responseData);
-      _showNotificationDelete(apiResponse.toJson());
     } catch (e) {
       print(e);
       apiResponse.success = false;
@@ -149,9 +148,7 @@ class ListService {
     return apiResponse;
   }
 
-  Future<ListApiResponse> updateList(String listName, String listId,
-      Future<void> Function(String) onSelectNotification) async {
-    initNotificationsPlugin(onSelectNotification);
+  Future<ListApiResponse> updateList(String listName, String listId) async {
     var token = getEncryptedToken();
     var queryParameters = {
       "token": token,
@@ -169,7 +166,6 @@ class ListService {
           await dio.post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = ListApiResponse.fromJson(responseData);
-      _showNotificationDelete(apiResponse.toJson());
     } catch (e) {
       print(e);
       apiResponse.success = false;
@@ -230,28 +226,6 @@ class ListService {
 
     flutterLocalNotificationsPlugin.initialize(initSettings,
         onSelectNotification: onSelectNotification);
-  }
-
-  Future<void> _showNotificationDelete(
-    Map<String, dynamic> downloadStatus,
-  ) async {
-    final android = localNot.AndroidNotificationDetails(
-        'channel id', 'channel name', 'channel description',
-        priority: localNot.Priority.high, importance: localNot.Importance.max);
-    final iOS = localNot.IOSNotificationDetails();
-    final platform =
-        new localNot.NotificationDetails(android: android, iOS: iOS);
-    final json = jsonEncode(downloadStatus);
-    final isSuccess = downloadStatus['success'];
-
-    await flutterLocalNotificationsPlugin.show(
-        Random().nextInt(100), // notification id
-        isSuccess ? 'Success' : 'Failure',
-        isSuccess
-            ? 'Element wurde gelöscht'
-            : 'There was an error while deleting the element.',
-        platform,
-        payload: json);
   }
 
   Future<void> _showNotificationCreated(

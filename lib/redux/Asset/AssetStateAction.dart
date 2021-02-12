@@ -29,6 +29,63 @@ Future<void> fetchAssetMarkedAction(
   store.dispatch(SetAssetsStateAction(AssetState(asset: updatedAsset)));
 }
 
+Future<void> fetchLatestAssetMarkedAction(
+    Store<AppState> store, PhotoService photoService, String sessionId) async {
+  store.dispatch(SetAssetsStateAction(
+      AssetState(isLoading: true, isError: false, errorMessage: "")));
+
+  try {
+    var assetResp = await photoService.getLatestAssets(sessionId);
+
+    if (!assetResp.success) {
+      if (assetResp.error != null && assetResp.error.code == 417) {
+        Redux.store.dispatch(
+            (store) => fetchUserActionFromStorage(store, new AuthService()));
+        return;
+      } else {
+        throw ("Fehler beim Laden der Alben: " +
+            (assetResp.error.code != null
+                ? assetResp.error.code.toString()
+                : "") +
+            (assetResp.error.message != null
+                ? assetResp.error.message.toString()
+                : ""));
+      }
+    }
+
+    var latestAssets =
+        await Future.wait(assetResp.data.items.map((asset) async {
+      var albumId = "album_" + asset.id.split("_")[1];
+      var albumInfo = await photoService.getAlbumInfo(sessionId, albumId);
+      var albumAsset = new AlbumAsset(asset.additional, asset.thumbnailStatus,
+          asset.id, asset.info, asset.type, false, null, []);
+      if (albumInfo.success) {
+        var parentAlbum = albumInfo.data.items.first;
+        albumAsset.parentAsset = new AlbumAsset(
+            parentAlbum.additional,
+            parentAlbum.thumbnailStatus,
+            parentAlbum.id,
+            parentAlbum.info,
+            "album",
+            false,
+            null, []);
+      }
+
+      return albumAsset;
+    }).toList());
+    store.dispatch(SetAssetsStateAction(
+      AssetState(
+          isLoading: false,
+          latestAssets: latestAssets,
+          errorMessage: "",
+          isError: false),
+    ));
+  } catch (error) {
+    store.dispatch(SetAssetsStateAction(AssetState(
+        isLoading: false, isError: true, errorMessage: error.toString())));
+  }
+}
+
 Future<void> fetchAssetWithChildrenAction(
     Store<AppState> store,
     PhotoService photoService,

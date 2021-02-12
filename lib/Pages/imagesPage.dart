@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:nas_app/Model/Asset.dart';
-import 'package:nas_app/Navigation/navDrawer.dart';
+import 'package:nas_app/Navigation/appBottomNavBar.dart';
 import 'package:nas_app/Services/FileService.dart';
 import 'package:nas_app/Services/PhotoService.dart';
 import 'package:nas_app/Widgets/FloatingActionButtons/ImagePage/ImageFloatingActionButton.dart';
@@ -35,15 +35,16 @@ class _ImagesPageState extends State<ImagesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    var albumId = widget.albumId;
+    if ((albumId == null || albumId == "") && arguments != null) {
+      albumId = arguments["albumId"];
+    }
     return StoreConnector<AppState, AppState>(
         converter: (store) => store.state,
         onInit: (store) => store.dispatch((store) => {
-              fetchAssetWithChildrenAction(
-                  store,
-                  photoService,
-                  store.state.userState.user.photoSessionId,
-                  null,
-                  widget.albumId)
+              fetchAssetWithChildrenAction(store, photoService,
+                  store.state.userState.user.photoSessionId, null, albumId)
             }),
         builder: (context, appState) {
           return Scaffold(
@@ -54,7 +55,7 @@ class _ImagesPageState extends State<ImagesPage> {
               ),
               floatingActionButton: getFloatingActionButton(
                   appState.assetState, appState.userState),
-              drawer: NavDrawerWidget(),
+              bottomNavigationBar: AppBottomNav(),
               body: (() {
                 if (!appState.assetState.isLoading) {
                   if (appState.assetState.isError) {
@@ -75,10 +76,14 @@ class _ImagesPageState extends State<ImagesPage> {
   }
 
   String getAppBarText(AssetState assetState) {
+    if (assetState.isLoading) {
+      return "";
+    }
     if (assetState != null &&
         assetState.asset != null &&
         assetState.asset.info != null &&
-        assetState.asset.info.title != null) {
+        assetState.asset.info.title != null &&
+        assetState.asset.info.title != "") {
       return assetState.asset.info.title;
     } else {
       return "Bilder";
@@ -144,7 +149,7 @@ class _ImagesPageState extends State<ImagesPage> {
           onPressed: () => {deleteAssets(markedAssets, userState)}));
     }
 
-    if (markedAssets.length == 1) {
+    if (markedAssets.length == 1 && markedAssets.first.type == "album") {
       appBarActions.add(IconButton(
           icon: Icon(Icons.edit),
           onPressed: () =>

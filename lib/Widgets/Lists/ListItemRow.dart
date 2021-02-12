@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nas_app/Model/List.dart';
 import 'package:nas_app/Services/ListService.dart';
 import 'package:nas_app/redux/List/ListStateAction.dart';
@@ -12,7 +13,6 @@ class ListItemRow extends StatefulWidget {
 }
 
 class _ListItemRowState extends State<ListItemRow> {
-  bool _isEnabled = false;
   TextEditingController _itemTitleController = new TextEditingController();
   FocusNode focusNode;
 
@@ -22,9 +22,8 @@ class _ListItemRowState extends State<ListItemRow> {
     focusNode = new FocusNode();
     focusNode.addListener(() {
       if (!focusNode.hasFocus) {
-        setState(() {
-          _isEnabled = false;
-        });
+        Redux.store.dispatch(
+            (store) => fetchListItemEnabledAction(store, widget.listItem.iD));
       }
     });
     super.initState();
@@ -33,61 +32,74 @@ class _ListItemRowState extends State<ListItemRow> {
   final ListService listService = new ListService();
   @override
   Widget build(BuildContext context) {
-    if (_isEnabled && widget.listItem.status != ListItemStatus.done) {
-      focusNode.requestFocus();
-      return ListTile(
-        title: TextField(
-          focusNode: focusNode,
-          controller: _itemTitleController,
-          enabled: true,
-          autofocus: true,
-        ),
-        leading: (() {
-          if (widget.listItem.status == ListItemStatus.open) {
-            return new IconButton(
-                icon: Icon(Icons.check_box_outline_blank, color: Colors.black),
-                onPressed: markItemAsDone);
-          } else {
-            return new IconButton(
-                icon: Icon(Icons.check_box_outlined, color: Colors.black),
-                onPressed: markItemAsOpen);
-          }
-        }()),
-        trailing: (() {
-          if (_isEnabled) {
-            return new IconButton(
-                icon: Icon(Icons.save, color: Colors.black),
-                onPressed: saveNewItem);
-          }
-        })(),
-      );
-    } else {
-      return ListTile(
-          title: GestureDetector(
-              child: Text(_itemTitleController.text),
-              onTap: () {
-                setState(() {
-                  _isEnabled = !_isEnabled;
-                });
-              }),
-          leading: (() {
-            if (widget.listItem.status == ListItemStatus.open) {
-              return new IconButton(
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.25,
+      secondaryActions: <Widget>[
+        IconSlideAction(
+            caption: 'Löschen',
+            color: Colors.red,
+            icon: Icons.delete,
+            onTap: () => {
+                  Redux.store.dispatch((store) => fetchDeleteListItemAction(
+                      store, listService, widget.listItem.iD))
+                }),
+      ],
+      child: (() {
+        if (widget.listItem.status == ListItemStatus.done) {
+          return ListTile(
+              onTap: markItemAsOpen,
+              title: Text(
+                _itemTitleController.text,
+                style: TextStyle(decoration: TextDecoration.lineThrough),
+              ),
+              leading: new IconButton(
+                  icon: Icon(Icons.check_box_outlined, color: Colors.black),
+                  onPressed: markItemAsOpen));
+        } else if (widget.listItem.isEnabled) {
+          focusNode.requestFocus();
+          return ListTile(
+              title: TextField(
+                focusNode: focusNode,
+                controller: _itemTitleController,
+                enabled: true,
+                autofocus: true,
+              ),
+              leading: (() {
+                if (widget.listItem.status == ListItemStatus.open) {
+                  return new IconButton(
+                      icon: Icon(Icons.check_box_outline_blank,
+                          color: Colors.black),
+                      onPressed: markItemAsDone);
+                } else {
+                  return new IconButton(
+                      icon: Icon(Icons.check_box_outlined, color: Colors.black),
+                      onPressed: markItemAsOpen);
+                }
+              }()),
+              trailing: new IconButton(
+                  icon: Icon(Icons.save, color: Colors.black),
+                  onPressed: saveNewItem));
+        } else {
+          return ListTile(
+              title: GestureDetector(
+                  child: Text(_itemTitleController.text),
+                  onLongPress: () {
+                    Redux.store.dispatch((store) =>
+                        fetchListItemEnabledAction(store, widget.listItem.iD));
+                  }),
+              onTap: markItemAsDone,
+              leading: new IconButton(
                   icon:
                       Icon(Icons.check_box_outline_blank, color: Colors.black),
-                  onPressed: markItemAsDone);
-            } else {
-              return new IconButton(
-                  icon: Icon(Icons.check_box_outlined, color: Colors.black),
-                  onPressed: markItemAsOpen);
-            }
-          }()));
-    }
+                  onPressed: markItemAsDone));
+        }
+      }()),
+    );
   }
 
   void markItemAsDone() {
     var newStatus = ListItemStatus.done;
-
     Redux.store.dispatch((store) => fetchUpdateListItemAction(store,
         listService, widget.listItem.title, widget.listItem.iD, newStatus));
   }
@@ -101,9 +113,6 @@ class _ListItemRowState extends State<ListItemRow> {
 
   void saveNewItem() {
     widget.listItem.title = _itemTitleController.text;
-    setState(() {
-      _isEnabled = false;
-    });
     Redux.store.dispatch((store) => fetchCreateListItemAction(
         store, listService, _itemTitleController.text));
   }

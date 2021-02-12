@@ -14,12 +14,17 @@ class _ListItemGalleryState extends State<ListItemGallery> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      key: Key(widget.listItems.length.toString()),
       itemCount: widget.listItems.length + 1,
       itemBuilder: (context, index) {
         if (index < widget.listItems.length) {
           return ListItemRow(listItem: widget.listItems[index]);
         }
-        if (index == widget.listItems.length) return ListemItemNewEntry();
+        if (index == widget.listItems.length) {
+          return ListemItemNewEntry();
+        } else {
+          return Container();
+        }
       },
     );
   }

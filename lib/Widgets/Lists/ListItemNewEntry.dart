@@ -41,10 +41,7 @@ class _ListemItemNewEntryState extends State<ListemItemNewEntry> {
   }
 
   void createNewItem() {
-    listService
-        .createListItem(_itemTitleController.text,
-            Redux.store.state.listState.currentListId)
-        .then((value) => Redux.store
-            .dispatch((store) => fetchAllListsAction(store, listService)));
+    Redux.store.dispatch((store) => fetchCreateListItemAction(
+        store, listService, _itemTitleController.text));
   }
 }

@@ -1,4 +1,4 @@
-package com.example.nas_app
+package de.anfalt.nas_app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,7 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meta/meta.dart';
+import 'package:nas_app/Model/UserSettings.dart';
 import 'package:nas_app/Services/AuthService.dart';
+import 'package:nas_app/main.dart';
 import 'package:redux/redux.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../store.dart';
 import 'UserState.dart';
@@ -11,6 +15,40 @@ class SetUserStateAction {
   final UserState userState;
 
   SetUserStateAction(this.userState);
+}
+
+void fetchSetMessagingTokenAction(Store<AppState> store, String token) {
+  store.dispatch(SetUserStateAction(UserState(messagingToken: token)));
+}
+
+Future<void> fetchGetUserSettingsAction(Store<AppState> store) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var primaryColorPref = prefs.getString("PrimaryColor");
+  var accentColorPref = prefs.getString("AccentColor");
+  var useComicSans = prefs.getBool("UseComicSans");
+  if (useComicSans == null) {
+    useComicSans = false;
+  }
+  if (primaryColorPref == null) {
+    primaryColorPref = "#0000ff";
+  }
+  if (accentColorPref == null) {
+    accentColorPref = "#aa9944";
+  }
+  var primaryColor = HexColor.fromHex(primaryColorPref);
+  var accentColor = HexColor.fromHex(accentColorPref);
+
+  store.dispatch(SetUserStateAction(UserState(
+      userSettings: UserSettings(primaryColor, accentColor, useComicSans))));
+}
+
+Future<void> fetchSetUserSettingsAction(
+    Store<AppState> store, UserSettings userSettings) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString("PrimaryColor", userSettings.primaryColor.toHex());
+  prefs.setString("AccentColor", userSettings.accentColor.toHex());
+  prefs.setBool("UseComicSans", userSettings.useComicSansFont);
+  store.dispatch(SetUserStateAction(UserState(userSettings: userSettings)));
 }
 
 Future<void> fetchUserLogOutAction(Store<AppState> store) async {

@@ -32,32 +32,24 @@ class PhotoGallery extends StatelessWidget {
               switch (asset.type) {
                 case "album":
                   {
-                    return InkWell(
-                        onLongPress: () => {},
-                        focusColor: Colors.red,
-                        child: Album(
-                          asset: asset,
-                          user: user,
-                        ));
+                    return Album(
+                      asset: asset,
+                      user: user,
+                    );
                   }
                 case "photo":
                   {
-                    return InkWell(
-                        onLongPress: () => {print("lfj")},
-                        child: Photo(
-                            asset: asset,
-                            imagesForSlider: album.assets,
-                            user: user));
+                    return Photo(
+                        asset: asset,
+                        imagesForSlider: album.assets,
+                        user: user);
                   }
                 case "video":
                   {
-                    return InkWell(
-                        onLongPress: () => {print("lfj")},
-                        focusColor: Colors.red,
-                        child: Video(
-                            asset: asset,
-                            imagesForSlider: album.assets,
-                            user: user));
+                    return Video(
+                        asset: asset,
+                        imagesForSlider: album.assets,
+                        user: user);
                   }
               }
             }).toList()));

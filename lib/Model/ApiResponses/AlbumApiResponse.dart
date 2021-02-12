@@ -111,6 +111,7 @@ class Info {
   String title;
   String description;
   int hits;
+  String createdate;
   String type;
   bool conversion;
   bool allowComment;
@@ -123,6 +124,7 @@ class Info {
       this.description,
       this.hits,
       this.type,
+      this.createdate,
       this.conversion,
       this.allowComment,
       this.allowEmbed});
@@ -137,6 +139,7 @@ class Info {
     conversion = json['conversion'];
     allowComment = json['allow_comment'];
     allowEmbed = json['allow_embed'];
+    createdate = json['createdate'];
   }
 
   Map<String, dynamic> toJson() {
@@ -150,6 +153,7 @@ class Info {
     data['conversion'] = this.conversion;
     data['allow_comment'] = this.allowComment;
     data['allow_embed'] = this.allowEmbed;
+    data['createdate'] = this.createdate;
     return data;
   }
 }

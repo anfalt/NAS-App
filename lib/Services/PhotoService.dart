@@ -257,6 +257,49 @@ class PhotoService {
     return apiResponse;
   }
 
+  Future<AlbumApiResponse> getLatestAssets(String sessionId,
+      [String albumId]) async {
+    var url = "/photo/webapi/photo.php";
+    var queryParameters = {"SynoToken": sessionId};
+
+    dynamic formdata = {
+      "api": "SYNO.PhotoStation.Photo",
+      "method": "list",
+      "version": 1,
+      "limit": 100,
+      "type": "photo,video",
+      "offset": 0,
+      "force_update": true,
+      "sort_by": "createdate",
+      "additional":
+          "album_permission,thumb_size,file_location,item_count,video-Codec,video_quality",
+      "sort_direction": "desc",
+    };
+
+    AlbumApiResponse apiResponse = new AlbumApiResponse();
+    try {
+      var response = await dio.post(url,
+          queryParameters: queryParameters,
+          data: formdata,
+          options: Options(
+              contentType: "application/x-www-form-urlencoded",
+              headers: {"X-SYNO-TOKEN": sessionId}));
+      var responseData = jsonDecode(response.data);
+      apiResponse = AlbumApiResponse.fromJson(responseData);
+      apiResponse.data.items = apiResponse.data.items.where((asset) {
+        return DateTime.parse(asset.info.createdate)
+            .isAfter(new DateTime.now().add(new Duration(days: -7)));
+      }).toList();
+    } catch (e) {
+      print(e);
+      apiResponse.success = false;
+      apiResponse.error = new AlbumApiError();
+      apiResponse.error.message = e.toString();
+    }
+
+    return apiResponse;
+  }
+
   Future<AlbumApiResponse> deletePhoto(List<String> assetIds, String userName,
       Future<void> Function(String) onSelectNotification) async {
     initNotificationsPlugin(onSelectNotification);

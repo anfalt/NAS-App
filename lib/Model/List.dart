@@ -44,7 +44,7 @@ class ListItem {
   String createdDate;
   String modified;
   ListItemStatus status;
-  bool isMarked = false;
+  bool isEnabled = false;
 
   ListItem(
       {this.iD,

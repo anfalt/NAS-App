@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:nas_app/Model/List.dart';
-import 'package:nas_app/Navigation/navDrawer.dart';
+import 'package:nas_app/Navigation/appBottomNavBar.dart';
 import 'package:nas_app/Services/ListService.dart';
 import 'package:nas_app/Widgets/Lists/ListItemGallery.dart';
 import 'package:nas_app/redux/List/ListState.dart';
@@ -12,14 +12,14 @@ import 'package:nas_app/redux/store.dart';
 import 'package:redux/redux.dart';
 
 class ListItemsPage extends StatefulWidget {
-  final String currentListId;
-  const ListItemsPage(this.currentListId, {Key key}) : super(key: key);
+  const ListItemsPage({Key key}) : super(key: key);
   @override
   _ListItemsPageState createState() => new _ListItemsPageState();
 }
 
 class _ListItemsPageState extends State<ListItemsPage> {
   ListService listService;
+  String listId;
 
   @override
   void initState() {
@@ -30,10 +30,13 @@ class _ListItemsPageState extends State<ListItemsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    listId = arguments["listId"];
+
     return StoreConnector<AppState, AppState>(
         converter: (store) => store.state,
-        onInit: (store) => store.dispatch(
-            (store) => fetchSetCurrrentListAction(store, widget.currentListId)),
+        onInit: (store) => store
+            .dispatch((store) => fetchSetCurrrentListAction(store, listId)),
         builder: (context, appState) {
           return Scaffold(
               appBar: AppBar(
@@ -48,19 +51,24 @@ class _ListItemsPageState extends State<ListItemsPage> {
                 actions:
                     getAppBarActions(appState.listState, appState.userState),
               ),
-              drawer: NavDrawerWidget(),
+              bottomNavigationBar: AppBottomNav(),
               body: (() {
-                if (appState.listState.isError) {
-                  SchedulerBinding.instance.addPostFrameCallback((_) {
-                    showFailedDialog(context, appState.listState.errorMessage);
-                  });
-                } else {
-                  var currentList = getCurrentListByID(appState.listState);
-                  if (currentList != null) {
-                    return ListItemGallery(currentList.items);
+                if (!appState.listState.isLoading) {
+                  if (appState.listState.isError) {
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                      showFailedDialog(
+                          context, appState.listState.errorMessage);
+                    });
                   } else {
-                    Navigator.pushNamed(context, "/lists");
+                    var currentList = getCurrentListByID(appState.listState);
+                    if (currentList != null) {
+                      return ListItemGallery(currentList.items);
+                    } else {
+                      Navigator.pushNamed(context, "/lists");
+                    }
                   }
+                } else {
+                  return Center(child: CircularProgressIndicator());
                 }
               }()));
         });
@@ -106,8 +114,8 @@ class _ListItemsPageState extends State<ListItemsPage> {
   }
 
   void reloadLists(UserState userState) {
-    Redux.store.dispatch(
-        (Store<AppState> store) => fetchAllListsAction(store, listService));
+    Redux.store.dispatch((Store<AppState> store) =>
+        fetchAllListsAction(store, listService, userState.user));
   }
 
   ListElement getCurrentListByID(ListState listState) {

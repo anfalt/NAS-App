@@ -1,4 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:nas_app/redux/User/UserAction.dart';
+import 'package:nas_app/redux/store.dart';
 
 class PushNotificationsManager {
   PushNotificationsManager._();
@@ -19,7 +21,8 @@ class PushNotificationsManager {
 
       // For testing purposes print the Firebase Messaging token
       String token = await _firebaseMessaging.getToken();
-      print("FirebaseMessaging token: $token");
+      Redux.store
+          .dispatch((store) => {fetchSetMessagingTokenAction(store, token)});
 
       _initialized = true;
     }
