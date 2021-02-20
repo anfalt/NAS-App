@@ -15,14 +15,15 @@ class NotificationService {
     dio = new Dio();
   }
 
-  Future<Map<String, dynamic>> sendListNotification() async {
+  Future<Map<String, dynamic>> sendNotification(
+      String message, String title) async {
     await firebaseMessaging.requestNotificationPermissions(
       const IosNotificationSettings(
           sound: true, badge: true, alert: true, provisional: false),
     );
 
     var jsonBody = jsonEncode(<String, dynamic>{
-      "notification": {"body": "rest bofy", "title": "te"},
+      "notification": {"body": message, "title": title},
       "to": "/topics/ListTodos",
       "priority": 0,
     });

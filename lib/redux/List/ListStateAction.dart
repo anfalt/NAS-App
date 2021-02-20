@@ -16,6 +16,8 @@ class SetListsStateAction {
   SetListsStateAction(this.listState);
 }
 
+NotificationService notificationService = new NotificationService();
+
 Future<void> fetchListMarkedAction(Store<AppState> store, String listId) async {
   var allLists = store.state.listState.allLists.map((el) {
     if (el.iD == listId) {
@@ -106,10 +108,27 @@ Future<void> fetchUpdateListItemAction(
         .firstWhere((element) => element.iD == currentListID);
     var item = currentList.items.firstWhere((element) => element.iD == itemId);
 
+    String message = "Listeneintrag " + itemTitle + " wurde aktualisiert";
+
+    if (item.title != itemTitle) {
+      message =
+          "Eintrag " + item.title + " wurde in " + itemTitle + " umbenannet";
+    } else if (item.status != itemStatus) {
+      if (itemStatus == ListItemStatus.done) {
+        message = "Eintrag erledigt: ";
+      } else if (itemStatus == ListItemStatus.deleted) {
+        message = "Eintrag gelöscht: ";
+      } else if (itemStatus == ListItemStatus.open) {
+        message = "Eintrag offen: ";
+      }
+
+      message += itemTitle;
+    }
+
     item.title = itemTitle;
     item.status = itemStatus;
     item.modified = DateTime.now().toIso8601String();
-    NotificationService().sendListNotification();
+    notificationService.sendNotification(message, message);
     store.dispatch(SetListsStateAction(
         ListState(isLoading: false, allLists: store.state.listState.allLists)));
   }
@@ -125,9 +144,13 @@ Future<void> fetchDeleteListAction(
         isError: true,
         errorMessage: listApiReponse.errorMessage)));
   } else {
+    var listTitle = store.state.listState.allLists
+        .firstWhere((element) => element.iD == listId)
+        .title;
     store.state.listState.allLists
         .removeWhere((element) => element.iD == listId);
-
+    String message = "Liste gelöscht: " + listTitle;
+    notificationService.sendNotification(message, message);
     store.dispatch(SetListsStateAction(ListState(isLoading: false)));
   }
 }
@@ -145,8 +168,11 @@ Future<void> fetchDeleteListItemAction(
     var currentListID = store.state.listState.currentListId;
     var currentList = store.state.listState.allLists
         .firstWhere((element) => element.iD == currentListID);
+    String elementTitle =
+        currentList.items.firstWhere((element) => element.iD == itemId).title;
     currentList.items.removeWhere((element) => element.iD == itemId);
-
+    String message = "Eintrag gelöscht: " + elementTitle;
+    notificationService.sendNotification(message, message);
     store.dispatch(SetListsStateAction(ListState(isLoading: false)));
   }
 }
@@ -176,6 +202,9 @@ Future<void> fetchCreateListItemAction(
 
     currentList.items.add(item);
 
+    String message =
+        "Neuer Eintrag in " + currentList.title + " : " + itemTitle;
+    notificationService.sendNotification(message, message);
     store.dispatch(SetListsStateAction(ListState(isLoading: false)));
   }
 }
