@@ -65,9 +65,8 @@ class _LoginPageState extends State<LogInPage> {
                 Container(
                     height: 50,
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    child: RaisedButton(
-                      textColor: Colors.white,
-                      color: Colors.blue,
+                    child: ElevatedButton(
+                
                       child: Text('Login'),
                       onPressed: () {
                         Redux.store.dispatch((store) => {
@@ -120,7 +119,7 @@ class _LoginPageState extends State<LogInPage> {
 
   showLoginFailedDialog(BuildContext context, String message) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () {
         Navigator.of(context).pop();

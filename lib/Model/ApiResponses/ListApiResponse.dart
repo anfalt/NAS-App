@@ -29,7 +29,7 @@ class AllListsResponse {
 
   AllListsResponse.fromJson(Map<String, dynamic> json) {
     if (json['body'] != null) {
-      body = new List<ListElement>();
+      body = [];
       json['body'].forEach((v) {
         body.add(new ListElement.fromJson(v));
       });

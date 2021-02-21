@@ -44,7 +44,7 @@ class ListService {
   }
 
   Future<ListApiResponse> deleteList(String listId) async {
-    ;
+    
     var token = getEncryptedToken();
     var queryParameters = {
       "token": token,

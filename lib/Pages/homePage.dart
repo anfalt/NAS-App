@@ -77,7 +77,7 @@ getStateErrorMessage(AppState appState) {
 
 showFailedDialog(BuildContext context, String message) {
   // set up the button
-  Widget okButton = FlatButton(
+  Widget okButton = TextButton(
     child: Text("OK"),
     onPressed: () {
       Navigator.of(context).pop();
@@ -103,10 +103,9 @@ showFailedDialog(BuildContext context, String message) {
 }
 
 Widget getLatestImagesCard(BuildContext context, AppState appState) {
-  var themeData = Theme.of(context);
   if (appState.assetState.latestAssets.length == 0) {
-    return FlatButton(
-      padding: EdgeInsets.all(8.0),
+    return Padding(padding: EdgeInsets.all(8.0), child:TextButton(
+      
       onPressed: () {
         Navigator.pushNamed(context, "/images");
       },
@@ -114,7 +113,7 @@ Widget getLatestImagesCard(BuildContext context, AppState appState) {
         "Es wurden keine neuen Bilder hochgeladen.",
         style: TextStyle(fontSize: 18.0),
       ),
-    );
+    ));
   } else {
     return ListTile(
         title: Padding(
@@ -147,8 +146,8 @@ Widget getLatestListsCard(BuildContext context, AppState appState) {
   });
 
   if (latestListItems.length == 0) {
-    return FlatButton(
-      padding: EdgeInsets.all(8.0),
+    return Padding(padding: EdgeInsets.all(8.0),child:TextButton(
+      
       onPressed: () {
         Navigator.pushNamed(context, "/lists");
       },
@@ -156,7 +155,7 @@ Widget getLatestListsCard(BuildContext context, AppState appState) {
         "Es wurden keine neuen Enträge gefunden.",
         style: TextStyle(fontSize: 18.0),
       ),
-    );
+    ));
   } else {
     return ListTile(
         title: Padding(

@@ -76,7 +76,7 @@ class _ListItemsPageState extends State<ListItemsPage> {
 
   showFailedDialog(BuildContext context, String message) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () {
         Navigator.of(context).pop();

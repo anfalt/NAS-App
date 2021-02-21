@@ -147,7 +147,7 @@ class ColorSetting extends StatelessWidget {
             ),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: const Text('Speichern'),
               onPressed: () {
                 Navigator.of(context).pop();

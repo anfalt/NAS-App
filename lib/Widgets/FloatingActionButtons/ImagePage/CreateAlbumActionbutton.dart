@@ -48,7 +48,7 @@ class _CreateAlbumFloatingActionButtonDialogState
                       decoration: new InputDecoration(hintText: "Album Name"),
                       controller: _textController,
                     ),
-                    new FlatButton(
+                    new TextButton(
                       child: new Text("Album anlegen"),
                       onPressed: () {
                         createAlbum(_textController.text);

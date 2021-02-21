@@ -28,15 +28,14 @@ class NotificationService {
       "priority": 0,
     });
 
-    var result = await dio.post('https://fcm.googleapis.com/fcm/send',
+   await dio.post('https://fcm.googleapis.com/fcm/send',
         options: Options(headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': 'key=' + serverToken,
         }),
         data: jsonBody);
 
-    print(result.statusCode);
-    var i = 0;
+    
 
     final Completer<Map<String, dynamic>> completer =
         Completer<Map<String, dynamic>>();

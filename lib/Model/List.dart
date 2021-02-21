@@ -19,7 +19,7 @@ class ListElement {
     modified = json['Modified'];
     isDeleted = json['IsDeleted'];
     if (json['ListItems'] != null) {
-      items = new List<ListItem>();
+      items = [];
       json['ListItems'].forEach((v) {
         items.add(new ListItem.fromJson(v));
       });

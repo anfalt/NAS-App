@@ -53,7 +53,7 @@ class Data {
     total = json['total'];
     offset = json['offset'];
     if (json['items'] != null) {
-      items = new List<Asset>();
+      items = [];
       json['items'].forEach((v) {
         items.add(new Asset.fromJson(v));
       });
@@ -190,7 +190,7 @@ class Additional {
         ? new VideoCodec.fromJson(json['video_codec'])
         : null;
     if (json['video_quality'] != null) {
-      videoQuality = new List<VideoQuality>();
+      videoQuality = [];
       json['video_quality'].forEach((v) {
         videoQuality.add(new VideoQuality.fromJson(v));
       });

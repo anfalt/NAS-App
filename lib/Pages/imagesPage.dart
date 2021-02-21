@@ -92,7 +92,7 @@ class _ImagesPageState extends State<ImagesPage> {
 
   showFailedDialog(BuildContext context, String message) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () {
         Navigator.of(context).pop();
@@ -265,7 +265,7 @@ class _ImagesPageState extends State<ImagesPage> {
                       decoration: new InputDecoration(hintText: "Album Name"),
                       controller: _textController,
                     ),
-                    new FlatButton(
+                    new TextButton(
                       child: new Text("Speichern "),
                       onPressed: () {
                         updateAlbum(markedAsset.id, _textController.text);

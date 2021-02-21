@@ -44,7 +44,7 @@ class _AddListFloatingActionButtonDialogState
                       decoration: new InputDecoration(hintText: "Listen Name"),
                       controller: _textController,
                     ),
-                    new FlatButton(
+                    new TextButton(
                       child: new Text("Liste anlegen"),
                       onPressed: () {
                         createList(_textController.text);
