@@ -12,7 +12,7 @@ class AddListFloatingActionButton extends FloatingActionButtonItem {
   void onPressed([BuildContext context]) async {
     showDialog(
         context: context,
-        child: new AddListFloatingActionButtonDialog(onSelectNotification));
+        builder:(BuildContext context)=> new AddListFloatingActionButtonDialog(onSelectNotification));
   }
 }
 

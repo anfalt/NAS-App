@@ -132,7 +132,7 @@ class ColorSetting extends StatelessWidget {
       Color pickerColor, bool enableAlpha) {
     showDialog(
         context: context,
-        child: AlertDialog(
+        builder: (BuildContext context) =>AlertDialog(
           title: const Text('Farbe wählen'),
           content: SingleChildScrollView(
             child: ColorPicker(

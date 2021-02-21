@@ -14,7 +14,8 @@ class CreateAlbumFloatingActionButton extends FloatingActionButtonItem {
   void onPressed([BuildContext context]) async {
     showDialog(
         context: context,
-        child: new CreateAlbumFloatingActionButtonDialog(onSelectNotification));
+
+        builder:(BuildContext context)=> new CreateAlbumFloatingActionButtonDialog(onSelectNotification));
   }
 }
 
