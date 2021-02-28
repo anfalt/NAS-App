@@ -19,14 +19,24 @@ class _ListItemRowState extends State<ListItemRow> {
   @override
   void initState() {
     _itemTitleController.text = widget.listItem.title;
+    _itemTitleController.selection = TextSelection.fromPosition(TextPosition(offset: _itemTitleController.text.length));
+
     focusNode = new FocusNode();
+
+    
     focusNode.addListener(() {
       if (!focusNode.hasFocus) {
+
         Redux.store.dispatch(
-            (store) => fetchListItemEnabledAction(store, widget.listItem.iD));
+            (store) => fetchUpdateListItemAction(store,listService,_itemTitleController.text,widget.listItem.iD,widget.listItem.status ));
       }
     });
     super.initState();
+  }
+    @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
   }
 
   final ListService listService = new ListService();
@@ -57,13 +67,14 @@ class _ListItemRowState extends State<ListItemRow> {
                   icon: Icon(Icons.check_box_outlined, color: Colors.black),
                   onPressed: markItemAsOpen));
         } else if (widget.listItem.isEnabled) {
-          focusNode.requestFocus();
           return ListTile(
               title: TextField(
                 focusNode: focusNode,
                 controller: _itemTitleController,
+                autocorrect: false,
+                enableSuggestions: false,
                 enabled: true,
-                autofocus: true,
+                autofocus: false,
                 onSubmitted: (String text)=> updateItem(widget.listItem.iD, widget.listItem.status),
               ),
               leading: (() {
@@ -87,6 +98,7 @@ class _ListItemRowState extends State<ListItemRow> {
                   child: Text(_itemTitleController.text),
                   onLongPress: markItemAsDone,
               onTap:  () {
+                focusNode.requestFocus();
                     Redux.store.dispatch((store) =>
                         fetchListItemEnabledAction(store, widget.listItem.iD));
                   }),

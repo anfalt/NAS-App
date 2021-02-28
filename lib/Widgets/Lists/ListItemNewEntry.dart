@@ -10,18 +10,29 @@ class ListemItemNewEntry extends StatefulWidget {
 
 class _ListemItemNewEntryState extends State<ListemItemNewEntry> {
   TextEditingController _itemTitleController = new TextEditingController();
+  FocusNode focusNode;
 
   @override
   void initState() {
+    focusNode = new FocusNode();
+    
     super.initState();
   }
 
   final ListService listService = new ListService();
   @override
   Widget build(BuildContext context) {
+    var allLists = Redux.store.state.listState.allLists;
+    var currentList =  allLists.firstWhere((element) => element.iD == Redux.store.state.listState.currentListId);
+    if(currentList.items.where((element) => element.isEnabled).length==0)
+    {
+      focusNode.requestFocus();
+    }
     return ListTile(
       title: TextField(
         controller: _itemTitleController,
+        focusNode: focusNode,
+        enableSuggestions:true,
         enabled: true,
         onSubmitted: (String text)=>createNewItem(),
         decoration: InputDecoration(

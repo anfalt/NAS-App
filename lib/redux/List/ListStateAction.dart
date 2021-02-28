@@ -127,6 +127,7 @@ Future<void> fetchUpdateListItemAction(
 
     item.title = itemTitle;
     item.status = itemStatus;
+    item.isEnabled = false;
     item.modified = DateTime.now().toIso8601String();
     notificationService.sendNotification(message, message);
     store.dispatch(SetListsStateAction(
