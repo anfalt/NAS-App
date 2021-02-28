@@ -206,7 +206,7 @@ class ListService {
 
   String getEncryptedToken() {
     var userInfo = {
-      "sid": Redux.store.state.userState.user.fileSessionId,
+      "sid": Redux.store.state.userState.user.photoSessionId,
       "username": Redux.store.state.userState.user.name
     };
     Encrypted encrypted = encrypter.encrypt(jsonEncode(userInfo), iv: iv);

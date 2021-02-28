@@ -21,17 +21,11 @@ class AuthService {
       String userName, String password) async {
     AuthenticationResult result = new AuthenticationResult();
     var defPhotoApiAuth = authenticateUserPhotoAPI(userName, password);
-    var defFileApiAuth = authenticateUserFileAPI(userName, password);
-    var apiResonpses = await Future.wait([defPhotoApiAuth, defFileApiAuth]);
+    var apiResonpses = await Future.wait([defPhotoApiAuth]);
     PhotoApiAuthResponse photoResp = apiResonpses[0];
-    FileApiAuthResponse fileResp = apiResonpses[1];
 
-    if (!fileResp.success) {
-      result.success = false;
-      var errorCode = fileResp.error.code.toString();
-      var errorMessage = fileResp.error.message;
-      result.errorMessage = '$errorCode:$errorMessage';
-    } else if (!photoResp.success) {
+
+   if(!photoResp.success) {
       result.success = false;
       var errorCode = photoResp.error.code.toString();
       var errorMessage = photoResp.error.message;
@@ -42,8 +36,7 @@ class AuthService {
       user.name = photoResp.data.username;
       user.photoSessionId = photoResp.data.sid;
       user.photoPermission = photoResp.data.permission;
-      user.fileSessionId = fileResp.data.sid;
-
+    
       result.user = user;
       await storeUserCredentials(userName, password);
     }

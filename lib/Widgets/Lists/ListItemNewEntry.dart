@@ -23,6 +23,7 @@ class _ListemItemNewEntryState extends State<ListemItemNewEntry> {
       title: TextField(
         controller: _itemTitleController,
         enabled: true,
+        onSubmitted: (String text)=>createNewItem(),
         decoration: InputDecoration(
           hintText: 'Neuen Eintrag anlegen',
         ),

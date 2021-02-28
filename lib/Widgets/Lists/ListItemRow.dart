@@ -64,6 +64,7 @@ class _ListItemRowState extends State<ListItemRow> {
                 controller: _itemTitleController,
                 enabled: true,
                 autofocus: true,
+                onSubmitted: (String text)=> updateItem(widget.listItem.iD, widget.listItem.status),
               ),
               leading: (() {
                 if (widget.listItem.status == ListItemStatus.open) {
@@ -79,16 +80,16 @@ class _ListItemRowState extends State<ListItemRow> {
               }()),
               trailing: new IconButton(
                   icon: Icon(Icons.save, color: Colors.black),
-                  onPressed: saveNewItem));
+                  onPressed: ()=>{updateItem(widget.listItem.iD, widget.listItem.status)}));
         } else {
           return ListTile(
               title: GestureDetector(
                   child: Text(_itemTitleController.text),
-                  onLongPress: () {
+                  onLongPress: markItemAsDone,
+              onTap:  () {
                     Redux.store.dispatch((store) =>
                         fetchListItemEnabledAction(store, widget.listItem.iD));
                   }),
-              onTap: markItemAsDone,
               leading: new IconButton(
                   icon:
                       Icon(Icons.check_box_outline_blank, color: Colors.black),
@@ -116,4 +117,10 @@ class _ListItemRowState extends State<ListItemRow> {
     Redux.store.dispatch((store) => fetchCreateListItemAction(
         store, listService, _itemTitleController.text));
   }
+
+    void updateItem(String itemId, ListItemStatus itemStatus) {
+    widget.listItem.title = _itemTitleController.text;
+    Redux.store.dispatch((store) => fetchUpdateListItemAction(
+        store, listService, _itemTitleController.text,itemId,itemStatus));
+        focusNode.previousFocus();}
 }
