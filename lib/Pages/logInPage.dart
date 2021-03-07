@@ -71,7 +71,7 @@ class _LoginPageState extends State<LogInPage> {
                       onPressed: () {
                         Redux.store.dispatch((store) => {
                               fetchUserAction(store, authService,
-                                  nameController.text, passwordController.text)
+                                  nameController.text.trim(), passwordController.text.trim())
                             });
                       },
                     )),

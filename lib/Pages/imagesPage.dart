@@ -139,7 +139,8 @@ class _ImagesPageState extends State<ImagesPage> {
       return el.isMarked;
     });
 
-    if (markedAssets.length > 0) {
+    if (markedAssets.length > 0 &&
+        assetState.asset.additional.albumPermission.manage) {
       appBarActions.add(IconButton(
           icon: Icon(Icons.download_sharp),
           onPressed: () => {downloadAssets(markedAssets, userState)}));

@@ -62,7 +62,12 @@ Future<void> fetchUserLogOutAction(Store<AppState> store) async {
     newUser.photoSessionId = null;
 
     store.dispatch(SetUserStateAction(
-      UserState(isLoading: false, credentialsInStorage: false, user: newUser),
+      UserState(
+          isLoading: false,
+          credentialsInStorage: false,
+          user: newUser,
+          isError: false,
+          errorMessage: null),
     ));
   } catch (error) {
     store.dispatch(SetUserStateAction(
@@ -81,9 +86,11 @@ Future<void> fetchUserActionFromStorage(
     if (userName != null && passWord != null) {
       fetchUserAction(store, authService, userName, passWord);
     } else {
-      store.dispatch(SetUserStateAction(
-        UserState(isLoading: false, credentialsInStorage: false),
-      ));
+      store.dispatch(SetUserStateAction(UserState(
+          isLoading: false,
+          credentialsInStorage: false,
+          isError: false,
+          errorMessage: null)));
     }
   } catch (error) {
     store.dispatch(SetUserStateAction(
@@ -103,6 +110,8 @@ Future<void> fetchUserAction(Store<AppState> store, AuthService authServce,
     var user = authResult.user;
     store.dispatch(SetUserStateAction(
       UserState(
+        isError: false,
+        errorMessage: null,
         isLoading: false,
         user: user,
         credentialsInStorage: true,
