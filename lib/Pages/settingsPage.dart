@@ -139,7 +139,6 @@ class ColorSetting extends StatelessWidget {
               enableAlpha: enableAlpha,
               pickerColor: pickerColor,
               onColorChanged: (color) => {
-                print("hksdkfjsldjfsdlhjfsdkjfhsdkjfhsdkjfhsdf dsjfhsdklfh"),
                 onColorChange(color)
               },
               showLabel: true,

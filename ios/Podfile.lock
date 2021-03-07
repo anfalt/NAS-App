@@ -10,6 +10,8 @@ PODS:
   - CocoaAsyncSocket (7.6.5)
   - downloads_path_provider (0.0.1):
     - Flutter
+  - Firebase (6.33.0):
+    - Firebase/Core (= 6.33.0)
   - Firebase/Analytics (6.33.0):
     - Firebase/Core
   - Firebase/Core (6.33.0):
@@ -134,7 +136,9 @@ PODS:
 DEPENDENCIES:
   - better_player (from `.symlinks/plugins/better_player/ios`)
   - downloads_path_provider (from `.symlinks/plugins/downloads_path_provider/ios`)
+  - Firebase
   - Firebase/Analytics
+  - Firebase/Core
   - Firebase/Messaging
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
@@ -246,6 +250,6 @@ SPEC CHECKSUMS:
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   wakelock: bfc7955c418d0db797614075aabbc58a39ab5107
 
-PODFILE CHECKSUM: a5b9f3fd6b20b7ca0fda3f239459e05ab2253564
+PODFILE CHECKSUM: add367e19bf924f5282644204a565639e0fc7785
 
 COCOAPODS: 1.10.1
