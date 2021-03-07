@@ -196,7 +196,7 @@ class _ImagesPageState extends State<ImagesPage> {
 
     var albumAssets =
         assets.where((element) => element.type == "album").toList();
-
+    List<Future> futures = [];
     if (albumAssets.length > 0) {
       List<String> albumsToDelete = [];
       albumAssets.forEach((element) {
@@ -211,14 +211,16 @@ class _ImagesPageState extends State<ImagesPage> {
           albumsToDelete.add(element.id);
         }
       });
-      photoService.deleteAlbum(albumsToDelete.toList(), userState.user.name,
-          _onSelectNotificationDelete);
+      futures.add(photoService.deleteAlbum(albumsToDelete.toList(),
+          userState.user.name, _onSelectNotificationDelete));
     }
 
     if (photoAndVideoAssetIds.length > 0) {
-      photoService.deletePhoto(photoAndVideoAssetIds, userState.user.name,
-          _onSelectNotificationDelete);
+      futures.add(photoService.deletePhoto(photoAndVideoAssetIds,
+          userState.user.name, _onSelectNotificationDelete));
     }
+
+    Future.wait(futures).then((value) => reloadAsset(userState));
   }
 
   Future<void> _onSelectNotificationDownload(String json) async {
@@ -240,7 +242,7 @@ class _ImagesPageState extends State<ImagesPage> {
   Future<void> _onSelectNotificationDelete(String json) async {
     final obj = jsonDecode(json);
 
-    if (obj['isSuccess']) {
+    if (obj['success']) {
     } else {
       showDialog(
         context: context,

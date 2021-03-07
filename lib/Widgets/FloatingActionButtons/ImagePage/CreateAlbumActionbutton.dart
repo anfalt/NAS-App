@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:nas_app/Services/FileService.dart';
 import 'package:nas_app/Services/PhotoService.dart';
 import 'package:nas_app/Widgets/FloatingActionButtons/FloatingActionButtonItem.dart';
+import 'package:nas_app/redux/Asset/AssetStateAction.dart';
 import 'package:nas_app/redux/store.dart';
+import 'package:redux/redux.dart';
 
 class CreateAlbumFloatingActionButton extends FloatingActionButtonItem {
   IconData icon = Icons.folder;
@@ -14,8 +16,8 @@ class CreateAlbumFloatingActionButton extends FloatingActionButtonItem {
   void onPressed([BuildContext context]) async {
     showDialog(
         context: context,
-
-        builder:(BuildContext context)=> new CreateAlbumFloatingActionButtonDialog(onSelectNotification));
+        builder: (BuildContext context) =>
+            new CreateAlbumFloatingActionButtonDialog(onSelectNotification));
   }
 }
 
@@ -63,7 +65,16 @@ class _CreateAlbumFloatingActionButtonDialogState
     var appState = Redux.store.state;
     var parentAssetId =
         appState.assetState.asset != null ? appState.assetState.asset.id : null;
-    widget.photoService.createAlbum(albumName, parentAssetId,
+
+    await widget.photoService.createAlbum(albumName, parentAssetId,
         appState.userState.user.name, widget.onSelectNotification);
+    Redux.store.dispatch((Store<AppState> store) => {
+          fetchAssetWithChildrenAction(
+              store,
+              new PhotoService(),
+              store.state.userState.user.photoSessionId,
+              appState.assetState.asset,
+              appState.assetState.asset.id)
+        });
   }
 }

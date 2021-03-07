@@ -23,14 +23,24 @@ class Album extends StatelessWidget {
     }
 
     var themeData = Theme.of(context);
-
+    var markedAssets = Redux.store.state.assetState.asset.assets.where((el) {
+      return el.isMarked;
+    });
     // We're using a FutureBuilder since thumbData is a future
     return InkWell(
         onLongPress: () => {
               Redux.store.dispatch(
                   (store) => {fetchAssetMarkedAction(store, asset.id)})
             },
-        onTap: () => {openAlbum(asset.id)},
+        onTap: () => {
+              if (markedAssets.length > 0)
+                {
+                  Redux.store.dispatch(
+                      (store) => {fetchAssetMarkedAction(store, asset.id)})
+                }
+              else
+                {openAlbum(asset.id)}
+            },
         child: Container(
           margin: EdgeInsets.all(5),
           decoration: BoxDecoration(

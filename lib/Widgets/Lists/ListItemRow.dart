@@ -19,21 +19,25 @@ class _ListItemRowState extends State<ListItemRow> {
   @override
   void initState() {
     _itemTitleController.text = widget.listItem.title;
-    _itemTitleController.selection = TextSelection.fromPosition(TextPosition(offset: _itemTitleController.text.length));
+    _itemTitleController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _itemTitleController.text.length));
 
     focusNode = new FocusNode();
 
-    
     focusNode.addListener(() {
       if (!focusNode.hasFocus) {
-
-        Redux.store.dispatch(
-            (store) => fetchUpdateListItemAction(store,listService,_itemTitleController.text,widget.listItem.iD,widget.listItem.status ));
+        Redux.store.dispatch((store) => fetchUpdateListItemAction(
+            store,
+            listService,
+            _itemTitleController.text,
+            widget.listItem.iD,
+            widget.listItem.status));
       }
     });
     super.initState();
   }
-    @override
+
+  @override
   void dispose() {
     focusNode.dispose();
     super.dispose();
@@ -75,7 +79,8 @@ class _ListItemRowState extends State<ListItemRow> {
                 enableSuggestions: false,
                 enabled: true,
                 autofocus: false,
-                onSubmitted: (String text)=> updateItem(widget.listItem.iD, widget.listItem.status),
+                onSubmitted: (String text) =>
+                    updateItem(widget.listItem.iD, widget.listItem.status),
               ),
               leading: (() {
                 if (widget.listItem.status == ListItemStatus.open) {
@@ -91,14 +96,19 @@ class _ListItemRowState extends State<ListItemRow> {
               }()),
               trailing: new IconButton(
                   icon: Icon(Icons.save, color: Colors.black),
-                  onPressed: ()=>{updateItem(widget.listItem.iD, widget.listItem.status)}));
+                  onPressed: () => {
+                        updateItem(widget.listItem.iD, widget.listItem.status)
+                      }));
         } else {
           return ListTile(
               title: GestureDetector(
                   child: Text(_itemTitleController.text),
                   onLongPress: markItemAsDone,
-              onTap:  () {
-                focusNode.requestFocus();
+                  onDoubleTap: () => Redux.store.dispatch((store) =>
+                      fetchDeleteListItemAction(
+                          store, listService, widget.listItem.iD)),
+                  onTap: () {
+                    focusNode.requestFocus();
                     Redux.store.dispatch((store) =>
                         fetchListItemEnabledAction(store, widget.listItem.iD));
                   }),
@@ -130,9 +140,10 @@ class _ListItemRowState extends State<ListItemRow> {
         store, listService, _itemTitleController.text));
   }
 
-    void updateItem(String itemId, ListItemStatus itemStatus) {
+  void updateItem(String itemId, ListItemStatus itemStatus) {
     widget.listItem.title = _itemTitleController.text;
     Redux.store.dispatch((store) => fetchUpdateListItemAction(
-        store, listService, _itemTitleController.text,itemId,itemStatus));
-        focusNode.previousFocus();}
+        store, listService, _itemTitleController.text, itemId, itemStatus));
+    focusNode.previousFocus();
+  }
 }

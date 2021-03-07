@@ -24,6 +24,9 @@ class Video extends StatelessWidget {
     var imageUrl = asset.getSmallThumbURL(user);
     var currentAssetID =
         imagesForSlider.indexWhere((note) => note.id == asset.id);
+    var markedAssets = Redux.store.state.assetState.asset.assets.where((el) {
+      return el.isMarked;
+    });
     // We're using a FutureBuilder since thumbData is a future
     return InkWell(
         onLongPress: () => {
@@ -31,14 +34,22 @@ class Video extends StatelessWidget {
                   (store) => {fetchAssetMarkedAction(store, asset.id)})
             },
         onTap: () => {
-              Navigator.push(context, MaterialPageRoute(builder: (_) {
-                return PhotoSlider(
-                    imagesForSlider: imagesForSlider
-                        .where((element) => element.type != "album")
-                        .toList(),
-                    currentAssetIndex: currentAssetID,
-                    user: user);
-              }))
+              if (markedAssets.length > 0)
+                {
+                  Redux.store.dispatch(
+                      (store) => {fetchAssetMarkedAction(store, asset.id)})
+                }
+              else
+                {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) {
+                    return PhotoSlider(
+                        imagesForSlider: imagesForSlider
+                            .where((element) => element.type != "album")
+                            .toList(),
+                        currentAssetIndex: currentAssetID,
+                        user: user);
+                  }))
+                }
             },
         child: Container(
             margin: EdgeInsets.all(5),

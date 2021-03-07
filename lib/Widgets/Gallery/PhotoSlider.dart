@@ -196,7 +196,7 @@ String getUploadDateAsText(AlbumAsset asset) {
   var diff =
       new DateTime.now().difference(DateTime.parse(asset.info.createdate));
   if (diff.inDays < 2) {
-    return "vor " + diff.inHours.toString() + " Stunden";
+    return "vor " + (diff.inHours - 8).toString() + " Stunden";
   } else {
     return "vor " + diff.inDays.toString() + " Tagen";
   }

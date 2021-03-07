@@ -7,8 +7,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
 import 'package:nas_app/Services/FileService.dart';
 import 'package:nas_app/Services/PhotoService.dart';
 import 'package:nas_app/Widgets/FloatingActionButtons/FloatingActionButtonItem.dart';
+import 'package:nas_app/redux/Asset/AssetStateAction.dart';
 import 'package:nas_app/redux/store.dart';
 import 'package:path/path.dart' as path;
+import 'package:redux/redux.dart';
 
 class UploadImageFloatingActionButton extends FloatingActionButtonItem {
   FileService fileService;
@@ -32,8 +34,15 @@ class UploadImageFloatingActionButton extends FloatingActionButtonItem {
       String filePath =
           await FlutterAbsolutePath.getAbsolutePath(element.identifier);
       String fileName = path.basename(filePath);
-      photoService.uploadPhoto(appState.userState.user.photoSessionId, filePath,
-          fileName, albumPath, onSelectNotification);
+      await photoService.uploadPhoto(appState.userState.user.photoSessionId,
+          filePath, fileName, albumPath, onSelectNotification);
+      Redux.store.dispatch((Store<AppState> store) =>
+          fetchAssetWithChildrenAction(
+              store,
+              photoService,
+              appState.userState.user.photoSessionId,
+              store.state.assetState.asset.parentAsset,
+              store.state.assetState.asset.id));
     });
   }
 }

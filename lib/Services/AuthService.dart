@@ -24,19 +24,15 @@ class AuthService {
     var apiResonpses = await Future.wait([defPhotoApiAuth]);
     PhotoApiAuthResponse photoResp = apiResonpses[0];
 
-
-   if(!photoResp.success) {
+    if (!photoResp.success) {
       result.success = false;
-      var errorCode = photoResp.error.code.toString();
-      var errorMessage = photoResp.error.message;
-      result.errorMessage = '$errorCode:$errorMessage';
     } else {
       result.success = true;
       var user = new User();
       user.name = photoResp.data.username;
       user.photoSessionId = photoResp.data.sid;
       user.photoPermission = photoResp.data.permission;
-    
+
       result.user = user;
       await storeUserCredentials(userName, password);
     }

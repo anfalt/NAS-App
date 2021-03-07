@@ -28,7 +28,9 @@ class Photo extends StatelessWidget {
     } else if (asset.thumbnailStatus.contains("large")) {
       imageUrl = asset.getSmallThumbURL(user);
     }
-
+    var markedAssets = Redux.store.state.assetState.asset.assets.where((el) {
+      return el.isMarked;
+    });
     var currentAssetIndex =
         imagesForSlider.indexWhere((note) => note.id == asset.id);
     // We're using a FutureBuilder since thumbData is a future
@@ -38,14 +40,22 @@ class Photo extends StatelessWidget {
                   (store) => {fetchAssetMarkedAction(store, asset.id)})
             },
         onTap: () => {
-              Navigator.push(context, MaterialPageRoute(builder: (_) {
-                return PhotoSlider(
-                    imagesForSlider: imagesForSlider
-                        .where((element) => element.type != "album")
-                        .toList(),
-                    currentAssetIndex: currentAssetIndex,
-                    user: user);
-              }))
+              if (markedAssets.length > 0)
+                {
+                  Redux.store.dispatch(
+                      (store) => {fetchAssetMarkedAction(store, asset.id)})
+                }
+              else
+                {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) {
+                    return PhotoSlider(
+                        imagesForSlider: imagesForSlider
+                            .where((element) => element.type != "album")
+                            .toList(),
+                        currentAssetIndex: currentAssetIndex,
+                        user: user);
+                  }))
+                }
             },
         child: Container(
           margin: EdgeInsets.all(5),

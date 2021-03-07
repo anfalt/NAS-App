@@ -21,7 +21,8 @@ class AppBottomNav extends StatelessWidget {
           var userSeesLists =
               settings.taskListUsers.indexOf(userState.user.name) > -1;
           if (!userSeesLists) {
-            navItems = navItems.where((element) => element.route != "/lists");
+            navItems =
+                navItems.where((element) => element.route != "/lists").toList();
           }
           var currentRoute = ModalRoute.of(context).settings.name;
           var currentIndex = navItems

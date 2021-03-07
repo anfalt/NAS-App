@@ -152,8 +152,6 @@ class PhotoService {
     dynamic formdata = {
       "name": albumname,
       "id": parentAlbumId,
-      "type": "private",
-      "inheritParent": true,
       "api": "SYNO.PhotoStation.Album",
       "method": "create",
       "version": 1,
@@ -172,7 +170,6 @@ class PhotoService {
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
       _showNotificationAlbumCreate(apiResponse.toJson());
-      
     } catch (e) {
       print(e);
       apiResponse.success = false;
@@ -208,7 +205,7 @@ class PhotoService {
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
       _showNotificationDelete(apiResponse.toJson());
-          } catch (e) {
+    } catch (e) {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new AlbumApiError();
@@ -286,6 +283,9 @@ class PhotoService {
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
       apiResponse.data.items = apiResponse.data.items.where((asset) {
+        if (asset.info.createdate == null) {
+          return false;
+        }
         return DateTime.parse(asset.info.createdate)
             .isAfter(new DateTime.now().add(new Duration(days: -7)));
       }).toList();
@@ -324,7 +324,7 @@ class PhotoService {
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
       _showNotificationDelete(apiResponse.toJson());
-          } catch (e) {
+    } catch (e) {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new AlbumApiError();
@@ -460,7 +460,7 @@ class PhotoService {
         isSuccess ? 'Success' : 'Failure',
         isSuccess
             ? 'Album has been created!'
-            : 'There was an error while deleting the file.',
+            : 'There was an error creating the album.',
         platform,
         payload: json);
   }
