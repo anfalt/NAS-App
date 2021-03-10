@@ -5,7 +5,7 @@ import 'package:nas_app/redux/List/ListStateAction.dart';
 import 'package:nas_app/redux/store.dart';
 
 class ListGallery extends StatelessWidget {
-  const ListGallery({Key key, @required this.allLists}) : super(key: key);
+  const ListGallery({Key key = const Key("key"), required this.allLists}) : super(key: key);
 
   final List<ListElement> allLists;
 
@@ -30,8 +30,8 @@ class ListGallery extends StatelessWidget {
 
     return InkWell(
         onLongPress: () => {
-              Redux.store
-                  .dispatch((store) => {fetchListMarkedAction(store, list.iD)})
+              Redux.store!
+                  .dispatch((store) => {fetchListMarkedAction(store, list.iD!)})
             },
         onTap: () => {
               Navigator.pushNamed(context, "/lists/items",
@@ -39,7 +39,7 @@ class ListGallery extends StatelessWidget {
             },
         child: Container(
           decoration: BoxDecoration(
-              color: list.isMarked ? themeData.accentColor : Colors.white,
+              color: list.isMarked! ? themeData.accentColor : Colors.white,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(5),
                   topRight: Radius.circular(5),
@@ -57,7 +57,7 @@ class ListGallery extends StatelessWidget {
           child: ListTile(
               title: Padding(
                 padding: EdgeInsets.only(top: 5),
-                child: Text(list.title, style: TextStyle(fontSize: 18)),
+                child: Text(list.title!, style: TextStyle(fontSize: 18)),
               ),
               subtitle: Padding(
                   padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -69,7 +69,7 @@ class ListGallery extends StatelessWidget {
                           widgets.add(Row(children: [
                             MyBullet(),
                             Expanded(
-                                child: Text(previewListItems[i].title,
+                                child: Text(previewListItems[i].title!,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                         color: previewListItems[i].status ==

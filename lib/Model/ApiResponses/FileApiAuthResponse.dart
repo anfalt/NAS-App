@@ -1,7 +1,8 @@
+
 class FileApiAuthResponse {
-  FileApiData data;
-  bool success;
-  FileApiError error;
+  FileApiData? data;
+  bool? success;
+  FileApiError? error;
 
   FileApiAuthResponse({this.data, this.success});
 
@@ -15,18 +16,18 @@ class FileApiAuthResponse {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data!.toJson();
     }
     data['success'] = this.success;
     if (this.error != null) {
-      data['error'] = this.error.toJson();
+      data['error'] = this.error!.toJson();
     }
     return data;
   }
 }
 
 class FileApiData {
-  String sid;
+  String? sid;
 
   FileApiData({this.sid});
 
@@ -42,8 +43,8 @@ class FileApiData {
 }
 
 class FileApiError {
-  int code;
-  String message;
+  int? code;
+  String? message;
 
   FileApiError({this.code});
 

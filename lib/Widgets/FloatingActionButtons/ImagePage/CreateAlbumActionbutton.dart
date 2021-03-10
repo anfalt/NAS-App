@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -9,13 +10,13 @@ import 'package:nas_app/redux/store.dart';
 import 'package:redux/redux.dart';
 
 class CreateAlbumFloatingActionButton extends FloatingActionButtonItem {
-  IconData icon = Icons.folder;
+  IconData? icon = Icons.folder;
   final Future<void> Function(String) onSelectNotification;
   CreateAlbumFloatingActionButton(this.onSelectNotification);
 
-  void onPressed([BuildContext context]) async {
+  void onPressed([BuildContext? context]) async {
     showDialog(
-        context: context,
+        context: context!,
         builder: (BuildContext context) =>
             new CreateAlbumFloatingActionButtonDialog(onSelectNotification));
   }
@@ -33,7 +34,7 @@ class CreateAlbumFloatingActionButtonDialog extends StatefulWidget {
 
 class _CreateAlbumFloatingActionButtonDialogState
     extends State<CreateAlbumFloatingActionButtonDialog> {
-  String albumName;
+  String albumName = "";
   IconData icon = Icons.image;
   TextEditingController _textController = new TextEditingController();
 
@@ -62,19 +63,19 @@ class _CreateAlbumFloatingActionButtonDialogState
   }
 
   void createAlbum(String albumName) async {
-    var appState = Redux.store.state;
+    var appState = Redux.store!.state;
     var parentAssetId =
-        appState.assetState.asset != null ? appState.assetState.asset.id : null;
+        appState.assetState!.asset != null ? appState.assetState!.asset!.id : null;
 
-    await widget.photoService.createAlbum(albumName, parentAssetId,
-        appState.userState.user.name, widget.onSelectNotification);
-    Redux.store.dispatch((Store<AppState> store) => {
+    await widget.photoService.createAlbum(albumName, parentAssetId!,
+        appState.userState!.user!.name!, widget.onSelectNotification);
+    Redux.store!.dispatch((Store<AppState> store) => {
           fetchAssetWithChildrenAction(
               store,
               new PhotoService(),
-              store.state.userState.user.photoSessionId,
-              appState.assetState.asset,
-              appState.assetState.asset.id)
+              store.state.userState!.user!.photoSessionId!,
+              appState.assetState!.asset,
+              appState.assetState!.asset?.id)
         });
   }
 }

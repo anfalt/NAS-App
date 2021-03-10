@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
             bottomNavigationBar: AppBottomNav(),
             body: ListView(children: <Widget>[
               ListTile(
-                title: Text(userState.user.name,
+                title: Text(userState.user!.name!,
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 trailing: IconButton(
                     icon: Icon(
@@ -37,17 +37,17 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               ListTile(
                   title: Text('Primärfarbe'),
-                  trailing: ColorSetting(userState.userSettings.primaryColor,
+                  trailing: showColorPickerSetting(context,userState.userSettings!.primaryColor,
                       setPrimaryColor, false)),
               ListTile(
                   title: Text('Sekundärfarbe'),
-                  trailing: ColorSetting(userState.userSettings.accentColor,
+                  trailing: showColorPickerSetting(context,userState.userSettings!.accentColor,
                       setAccentColor, true)),
               ListTile(
                   title: Text('Comic Sans Schriftart'),
                   trailing: Switch(
                     onChanged: setUseComicSans,
-                    value: userState.userSettings.useComicSansFont,
+                    value: userState.userSettings!.useComicSansFont,
                   )),
               ListTile(
                   title: Text('Messaging Token'),
@@ -55,7 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       width: 100,
                       child: SelectableText(
                         userState.messagingToken != null
-                            ? userState.messagingToken
+                            ? userState.messagingToken!
                             : "",
                         toolbarOptions: ToolbarOptions(
                             copy: true,
@@ -71,51 +71,41 @@ class _SettingsPageState extends State<SettingsPage> {
   void logoutUser(
     BuildContext context,
   ) {
-    Redux.store.dispatch(fetchUserLogOutAction);
+    Redux.store!.dispatch(fetchUserLogOutAction);
     Navigator.of(context).pushNamed("/home");
   }
 
   setPrimaryColor(Color color) {
-    var userSettings = Redux.store.state.userState.userSettings;
-    userSettings.primaryColor = color;
+    var userSettings = Redux.store!.state.userState!.userSettings;
+    userSettings!.primaryColor = color;
 
-    Redux.store
+    Redux.store!
         .dispatch((store) => fetchSetUserSettingsAction(store, userSettings));
   }
 
   setAccentColor(Color color) {
-    var userSettings = Redux.store.state.userState.userSettings;
-    userSettings.accentColor = color;
+    var userSettings = Redux.store!.state.userState!.userSettings;
+    userSettings!.accentColor = color;
 
-    Redux.store
+    Redux.store!
         .dispatch((store) => fetchSetUserSettingsAction(store, userSettings));
   }
 
   setUseComicSans(bool useComicSans) {
-    var userSettings = Redux.store.state.userState.userSettings;
-    userSettings.useComicSansFont = useComicSans;
+    var userSettings = Redux.store!.state.userState!.userSettings;
+    userSettings!.useComicSansFont = useComicSans;
 
-    Redux.store
+    Redux.store!
         .dispatch((store) => fetchSetUserSettingsAction(store, userSettings));
   }
 }
 
-class ColorSetting extends StatelessWidget {
-  final bool enableAlpha;
-  final Color pickerColor;
-  final Function(Color) onColorChanged;
 
-  ColorSetting(this.pickerColor, this.onColorChanged, this.enableAlpha);
 
-  void onColorChangedHandler(Color color) {
-    onColorChanged(color);
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget showColorPickerSetting(BuildContext context, Color pickerColor, Function(Color) onColorChanged, bool enbalbeAlpha) {
     return GestureDetector(
         onTap: () => {
-              showColorPicker(context, onColorChanged, pickerColor, enableAlpha)
+              showColorPicker(context, onColorChanged, pickerColor, enbalbeAlpha)
             },
         child: Container(
           height: 40,
@@ -139,6 +129,7 @@ class ColorSetting extends StatelessWidget {
               enableAlpha: enableAlpha,
               pickerColor: pickerColor,
               onColorChanged: (color) => {
+                pickerColor=color,
                 onColorChange(color)
               },
               showLabel: true,
@@ -155,4 +146,3 @@ class ColorSetting extends StatelessWidget {
           ],
         ));
   }
-}

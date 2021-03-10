@@ -4,16 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nas_app/Model/Asset.dart';
 import 'package:nas_app/Model/User.dart';
+import 'package:photo_view/photo_view.dart';
+
 import 'package:nas_app/redux/store.dart';
 
 import "VideoPlayerSlide.dart";
 
 class PhotoSlider extends StatelessWidget {
   const PhotoSlider({
-    Key key,
-    @required this.currentAssetIndex,
-    @required this.imagesForSlider,
-    @required this.user,
+    Key key = const Key("key"),
+    required this.currentAssetIndex,
+    required this.imagesForSlider,
+    required this.user,
   }) : super(key: key);
 
   final int currentAssetIndex;
@@ -29,7 +31,7 @@ class PhotoSlider extends StatelessWidget {
           CachedNetworkImageProvider(
             element.getLargeThumbUrl(user),
             headers: {
-              "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId
+              "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId!
             },
           ),
           context);
@@ -122,7 +124,7 @@ Widget getCarouselForHomePage(
     precacheImage(
         CachedNetworkImageProvider(
           element.getLargeThumbUrl(user),
-          headers: {"Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId},
+          headers: {"Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId!},
         ),
         context);
   });
@@ -179,22 +181,22 @@ Widget getGetOverlayLatestSlider(BuildContext context, AlbumAsset asset) {
               ])),
           child: Column(verticalDirection: VerticalDirection.up, children: [
             ListTile(
-              title: Text(asset.parentAsset.info.title),
+              title: Text(asset.parentAsset!.info!.title == null ? "":asset.parentAsset!.info!.title!),
               subtitle: Text(getUploadDateAsText(asset)),
             )
           ])),
       onTap: () {
         var store = Redux.store;
-        store.dispatch((store) => {
+        store!.dispatch((store) => {
               Navigator.of(context).pushNamed("/images",
-                  arguments: {"albumId": asset.parentAsset.id})
+                  arguments: {"albumId": asset.parentAsset!.id})
             });
       });
 }
 
 String getUploadDateAsText(AlbumAsset asset) {
   var diff =
-      new DateTime.now().difference(DateTime.parse(asset.info.createdate));
+      new DateTime.now().difference(DateTime.parse(asset.info!.createdate!));
   if (diff.inDays < 2) {
     return "vor " + (diff.inHours - 8).toString() + " Stunden";
   } else {
@@ -211,7 +213,7 @@ Widget photoSliderItem(BuildContext context, AlbumAsset asset, User user,
   return Container(
       child: CachedNetworkImage(
           httpHeaders: {
-        "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId
+        "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId!
       },
           imageUrl: imageUrl,
           progressIndicatorBuilder: (context, url, downloadProgress) => Center(
@@ -220,6 +222,9 @@ Widget photoSliderItem(BuildContext context, AlbumAsset asset, User user,
                     AlwaysStoppedAnimation(Theme.of(context).accentColor),
                 value: downloadProgress.progress,
               )),
+               imageBuilder: (context, imageProvider) => PhotoView(
+        imageProvider: imageProvider,
+    ),
           errorWidget: (context, url, error) => Icon(Icons.error)));
 }
 

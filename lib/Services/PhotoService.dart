@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:math';
 
@@ -9,20 +10,22 @@ import 'package:nas_app/Model/ApiResponses/AlbumInfoApiResponse.dart';
 import 'package:nas_app/Model/Asset.dart';
 import 'package:nas_app/Model/User.dart';
 import 'package:nas_app/redux/store.dart';
+import 'package:heic_to_jpg/heic_to_jpg.dart';
+
 
 import './NetworkService.dart';
 
 class PhotoService {
-  User currentUser;
+  User? currentUser;
 
-  localNot.FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  Dio dio;
+  localNot.FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
+  Dio? dio;
 
   PhotoService() {
     dio = NetworkService.getDioInstance();
   }
 
-  Future<AlbumApiResponse> getAssets(String sessionId, [String albumId]) async {
+  Future<AlbumApiResponse> getAssets(String sessionId, [String? albumId]) async {
     var url = "/photo/webapi/album.php";
     var queryParameters = {
       "api": "SYNO.PhotoStation.Album",
@@ -44,14 +47,14 @@ class PhotoService {
 
     AlbumApiResponse apiResponse = new AlbumApiResponse();
     try {
-      var response = await dio.get(url, queryParameters: queryParameters);
+      var response = await dio!.get(url, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
     } catch (e) {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new AlbumApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     return apiResponse;
@@ -68,6 +71,13 @@ class PhotoService {
     var url = "/photo/webapi/file.php";
     var timeStamp = DateTime.now().millisecondsSinceEpoch;
     var store = Redux.store;
+    if(filePath.toLowerCase().endsWith("heic")){
+        filePath = await HeicToJpg.convert(filePath);
+        fileName = fileName.toLowerCase().replaceAll("heic", "jpg");
+    }
+    
+
+    
     FormData formdata = new FormData.fromMap({
       "api": "SYNO.PhotoStation.File",
       "method": "uploadphoto",
@@ -83,18 +93,18 @@ class PhotoService {
     AlbumApiResponse apiResponse = new AlbumApiResponse();
     try {
       var response =
-          await dio.post(url, data: formdata, queryParameters: queryParameters);
+          await dio!.post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
     } catch (e) {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new AlbumApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     _showNotificationUpload(
-        fileName, apiResponse.toJson(), store.state.assetState.asset);
+        fileName, apiResponse.toJson(), store!.state!.assetState!.asset!);
 
     return apiResponse;
   }
@@ -125,18 +135,18 @@ class PhotoService {
     AlbumApiResponse apiResponse = new AlbumApiResponse();
     try {
       var response =
-          await dio.post(url, data: formdata, queryParameters: queryParameters);
+          await dio!.post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
     } catch (e) {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new AlbumApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     _showNotificationUpload(
-        fileName, apiResponse.toJson(), store.state.assetState.asset);
+        fileName, apiResponse.toJson(), store!.state.assetState!.asset!);
 
     return apiResponse;
   }
@@ -160,12 +170,12 @@ class PhotoService {
 
     AlbumApiResponse apiResponse = new AlbumApiResponse();
     try {
-      var response = await dio.post(url,
+      var response = await dio!.post(url,
           data: formdata,
           options: Options(
               contentType: "application/x-www-form-urlencoded",
               headers: {
-                "X-SYNO-TOKEN": Redux.store.state.userState.user.photoSessionId
+                "X-SYNO-TOKEN": Redux.store!.state!.userState!.user!.photoSessionId
               }));
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
@@ -174,7 +184,7 @@ class PhotoService {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new AlbumApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     return apiResponse;
@@ -195,12 +205,12 @@ class PhotoService {
 
     AlbumApiResponse apiResponse = new AlbumApiResponse();
     try {
-      var response = await dio.post(url,
+      var response = await dio!.post(url,
           data: formdata,
           options: Options(
               contentType: "application/x-www-form-urlencoded",
               headers: {
-                "X-SYNO-TOKEN": Redux.store.state.userState.user.photoSessionId
+                "X-SYNO-TOKEN": Redux.store!.state!.userState!.user!.photoSessionId
               }));
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
@@ -209,7 +219,7 @@ class PhotoService {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new AlbumApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     return apiResponse;
@@ -235,7 +245,7 @@ class PhotoService {
 
     AlbumApiResponse apiResponse = new AlbumApiResponse();
     try {
-      var response = await dio.post(url,
+      var response = await dio!.post(url,
           data: formdata,
           options: Options(
               contentType: "application/x-www-form-urlencoded",
@@ -247,14 +257,14 @@ class PhotoService {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new AlbumApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     return apiResponse;
   }
 
   Future<AlbumApiResponse> getLatestAssets(String sessionId,
-      [String albumId]) async {
+      [String? albumId]) async {
     var url = "/photo/webapi/photo.php";
     var queryParameters = {"SynoToken": sessionId};
 
@@ -274,7 +284,7 @@ class PhotoService {
 
     AlbumApiResponse apiResponse = new AlbumApiResponse();
     try {
-      var response = await dio.post(url,
+      var response = await dio!.post(url,
           queryParameters: queryParameters,
           data: formdata,
           options: Options(
@@ -282,18 +292,18 @@ class PhotoService {
               headers: {"X-SYNO-TOKEN": sessionId}));
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
-      apiResponse.data.items = apiResponse.data.items.where((asset) {
-        if (asset.info.createdate == null) {
+      apiResponse.data!.items = apiResponse.data!.items.where((asset) {
+        if (asset.info!.createdate == null) {
           return false;
         }
-        return DateTime.parse(asset.info.createdate)
+        return DateTime.parse(asset.info!.createdate!)
             .isAfter(new DateTime.now().add(new Duration(days: -7)));
       }).toList();
     } catch (e) {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new AlbumApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     return apiResponse;
@@ -314,12 +324,12 @@ class PhotoService {
 
     AlbumApiResponse apiResponse = new AlbumApiResponse();
     try {
-      var response = await dio.post(url,
+      var response = await dio!.post(url,
           data: formdata,
           options: Options(
               contentType: "application/x-www-form-urlencoded",
               headers: {
-                "X-SYNO-TOKEN": Redux.store.state.userState.user.photoSessionId
+                "X-SYNO-TOKEN": Redux.store!.state!.userState!.user!.photoSessionId
               }));
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
@@ -328,14 +338,14 @@ class PhotoService {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new AlbumApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     return apiResponse;
   }
 
   Future<AlbumInfoApiResponse> getAlbumInfo(String sessionId,
-      [String albumId]) async {
+      [String? albumId]) async {
     var url = "/photo/webapi/album.php";
     var queryParameters = {
       "api": "SYNO.PhotoStation.Album",
@@ -348,13 +358,13 @@ class PhotoService {
 
     AlbumInfoApiResponse apiResponse = new AlbumInfoApiResponse();
     try {
-      var response = await dio.get(url, queryParameters: queryParameters);
+      var response = await dio!.get(url, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumInfoApiResponse.fromJson(responseData);
     } catch (e) {
       apiResponse.success = false;
       apiResponse.error = new AlbumInfoApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     return apiResponse;
@@ -369,7 +379,7 @@ class PhotoService {
     final initSettings =
         localNot.InitializationSettings(android: android, iOS: iOS);
 
-    flutterLocalNotificationsPlugin.initialize(initSettings,
+    flutterLocalNotificationsPlugin!.initialize(initSettings,
         onSelectNotification: onSelectNotification);
   }
 
@@ -388,7 +398,7 @@ class PhotoService {
 
     final isSuccess = uploadStatus['success'];
 
-    await flutterLocalNotificationsPlugin.show(
+    await flutterLocalNotificationsPlugin!.show(
         Random().nextInt(100), // notification id
         isSuccess ? 'Success' : 'Failure',
         isSuccess
@@ -411,7 +421,7 @@ class PhotoService {
 
     final isSuccess = uploadStatus['success'];
 
-    await flutterLocalNotificationsPlugin.show(
+    await flutterLocalNotificationsPlugin!.show(
         Random().nextInt(100), // notification id
         isSuccess ? 'Success' : 'Failure',
         isSuccess
@@ -433,7 +443,7 @@ class PhotoService {
     final json = jsonEncode(downloadStatus);
     final isSuccess = downloadStatus['success'];
 
-    await flutterLocalNotificationsPlugin.show(
+    await flutterLocalNotificationsPlugin!.show(
         Random().nextInt(100), // notification id
         isSuccess ? 'Success' : 'Failure',
         isSuccess
@@ -455,7 +465,7 @@ class PhotoService {
     final json = jsonEncode(downloadStatus);
     final isSuccess = downloadStatus['success'];
 
-    await flutterLocalNotificationsPlugin.show(
+    await flutterLocalNotificationsPlugin!.show(
         Random().nextInt(100), // notification id
         isSuccess ? 'Success' : 'Failure',
         isSuccess

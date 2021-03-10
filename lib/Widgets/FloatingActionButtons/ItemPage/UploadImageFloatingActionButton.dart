@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -11,10 +12,10 @@ import 'package:nas_app/redux/store.dart';
 import 'package:path/path.dart' as path;
 
 class UploadImageFloatingActionButton extends FloatingActionButtonItem {
-  FileService fileService;
-  PhotoService photoService;
-  Future<void> Function(String) onSelectNotification;
-  localNot.FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  FileService? fileService;
+  PhotoService? photoService;
+  Future<void> Function(String)? onSelectNotification;
+  localNot.FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
   UploadImageFloatingActionButton(
       Future<void> Function(String) onSelectNotification) {
     fileService = new FileService();
@@ -22,18 +23,18 @@ class UploadImageFloatingActionButton extends FloatingActionButtonItem {
     this.onSelectNotification = onSelectNotification;
   }
 
-  IconData icon = Icons.image;
+  IconData? icon = Icons.image;
 
   void onPressed(BuildContext context) async {
-    var pickedFiles = await fileService.getImagesFromLocalSystem();
-    var appState = Redux.store.state;
-    var albumPath = appState.assetState.asset.info.sharepath;
+    var pickedFiles = await fileService!.getImagesFromLocalSystem();
+    var appState = Redux.store!.state;
+    var albumPath = appState.assetState!.asset!.info!.sharepath;
     pickedFiles.forEach((element) async {
       String filePath =
           await FlutterAbsolutePath.getAbsolutePath(element.identifier);
       String fileName = path.basename(filePath);
-      photoService.uploadPhoto(appState.userState.user.photoSessionId, filePath,
-          fileName, albumPath, onSelectNotification);
+      photoService!.uploadPhoto(appState.userState!.user!.photoSessionId!, filePath,
+          fileName, albumPath!, onSelectNotification!);
     });
   }
 }

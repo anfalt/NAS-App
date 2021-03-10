@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -19,7 +20,7 @@ class ListsPage extends StatefulWidget {
 }
 
 class _ListsPageState extends State<ListsPage> {
-  ListService listService;
+  ListService? listService;
   TextEditingController _textController = new TextEditingController();
   @override
   void initState() {
@@ -32,25 +33,25 @@ class _ListsPageState extends State<ListsPage> {
     return StoreConnector<AppState, AppState>(
         converter: (store) => store.state,
         onInit: (store) => store.dispatch((store) => fetchAllListsAction(
-            store, listService, store.state.userState.user)),
+            store, listService!, store.state.userState.user)),
         builder: (context, appState) {
           return Scaffold(
               appBar: AppBar(
                 title: Text("Listen"),
                 actions:
-                    getAppBarActions(appState.listState, appState.userState),
+                    getAppBarActions(appState.listState!, appState.userState!),
               ),
               floatingActionButton: ListFloatingActionButton(),
               bottomNavigationBar: AppBottomNav(),
               body: (() {
-                if (!appState.listState.isLoading) {
-                  if (appState.listState.isError) {
-                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                if (!appState.listState!.isLoading!) {
+                  if (appState.listState!.isError!) {
+                    SchedulerBinding.instance!.addPostFrameCallback((_) {
                       showFailedDialog(
-                          context, appState.listState.errorMessage);
+                          context, appState.listState!.errorMessage!);
                     });
                   } else {
-                    return ListGallery(allLists: appState.listState.allLists);
+                    return ListGallery(allLists: appState.listState!.allLists!);
                   }
                 } else {
                   return Center(child: CircularProgressIndicator());
@@ -96,8 +97,8 @@ class _ListsPageState extends State<ListsPage> {
     if (listState.allLists == null) {
       return appBarActions;
     } else {
-      markedLists = listState.allLists.where((el) {
-        return el.isMarked;
+      markedLists = listState.allLists!.where((el) {
+        return el.isMarked!;
       }).toList();
     }
 
@@ -119,12 +120,12 @@ class _ListsPageState extends State<ListsPage> {
   }
 
   void reloadAsset(UserState userState) {
-    Redux.store.dispatch((Store<AppState> store) =>
-        fetchAllListsAction(store, listService, userState.user));
+    Redux.store!.dispatch((Store<AppState> store) =>
+        fetchAllListsAction(store, listService!, userState.user!));
   }
 
   void displayAlbumEditDialog(BuildContext context, ListElement list) {
-    _textController.text = list.title;
+    _textController.text = list.title!;
     var dialog = new Dialog(
         child: Padding(
             padding: EdgeInsets.all(10),
@@ -139,7 +140,7 @@ class _ListsPageState extends State<ListsPage> {
                     new TextButton(
                       child: new Text("Speichern "),
                       onPressed: () {
-                        updateList(list.iD, _textController.text);
+                        updateList(list.iD!, _textController.text);
                         Navigator.pop(context);
                       },
                     )
@@ -150,8 +151,8 @@ class _ListsPageState extends State<ListsPage> {
   }
 
   void updateList(String listId, String newListName) {
-    Redux.store.dispatch((store) {
-      fetchUpdateListAction(store, listService, newListName, listId);
+    Redux.store!.dispatch((store) {
+      fetchUpdateListAction(store, listService!, newListName, listId);
     });
   }
 
@@ -160,8 +161,8 @@ class _ListsPageState extends State<ListsPage> {
 
     if (listIds.length > 0) {
       listIds.forEach((listId) {
-        Redux.store.dispatch(
-            (store) => fetchDeleteListAction(store, listService, listId));
+        Redux.store!.dispatch(
+            (store) => fetchDeleteListAction(store, listService!, listId!));
       });
     }
   }

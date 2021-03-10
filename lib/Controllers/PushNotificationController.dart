@@ -21,7 +21,7 @@ class PushNotificationsManager {
 
       // For testing purposes print the Firebase Messaging token
       String token = await _firebaseMessaging.getToken();
-      Redux.store
+      Redux.store!
           .dispatch((store) => {fetchSetMessagingTokenAction(store, token)});
 
       _initialized = true;

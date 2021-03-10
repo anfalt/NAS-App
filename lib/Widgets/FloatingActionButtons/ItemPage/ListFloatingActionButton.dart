@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:math' as math;
 
@@ -18,9 +19,9 @@ class ListFloatingActionButton extends StatefulWidget {
 
 class _ListFloatingActionButtonState extends State<ListFloatingActionButton>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
-  List<FloatingActionButtonItem> actions;
+  List<FloatingActionButtonItem> actions = [];
 
   @override
   void initState() {
@@ -48,7 +49,7 @@ class _ListFloatingActionButtonState extends State<ListFloatingActionButton>
           alignment: FractionalOffset.topCenter,
           child: new ScaleTransition(
             scale: new CurvedAnimation(
-              parent: _controller,
+              parent: _controller!,
               curve: new Interval(0.0, 1.0 - index / actions.length / 2.0,
                   curve: Curves.easeOut),
             ),
@@ -68,22 +69,22 @@ class _ListFloatingActionButtonState extends State<ListFloatingActionButton>
           new FloatingActionButton(
             heroTag: null,
             child: new AnimatedBuilder(
-              animation: _controller,
-              builder: (BuildContext context, Widget child) {
+              animation: _controller!,
+              builder: (BuildContext context, Widget? child) {
                 return new Transform(
                   transform:
-                      new Matrix4.rotationZ(_controller.value * 0.5 * math.pi),
+                      new Matrix4.rotationZ(_controller!.value * 0.5 * math.pi),
                   alignment: FractionalOffset.center,
                   child: new Icon(
-                      _controller.isDismissed ? Icons.add : Icons.close),
+                      _controller!.isDismissed ? Icons.add : Icons.close),
                 );
               },
             ),
             onPressed: () {
-              if (_controller.isDismissed) {
-                _controller.forward();
+              if (_controller!.isDismissed) {
+                _controller!.forward();
               } else {
-                _controller.reverse();
+                _controller!.reverse();
               }
             },
           ),

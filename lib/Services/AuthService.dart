@@ -9,9 +9,9 @@ import 'package:nas_app/Model/User.dart';
 import './NetworkService.dart';
 
 class AuthService {
-  User currentUser;
+  User? currentUser;
 
-  Dio dio;
+  Dio? dio;
 
   AuthService() {
     dio = NetworkService.getDioInstance();
@@ -24,14 +24,14 @@ class AuthService {
     var apiResonpses = await Future.wait([defPhotoApiAuth]);
     PhotoApiAuthResponse photoResp = apiResonpses[0];
 
-    if (!photoResp.success) {
+    if (!photoResp.success!) {
       result.success = false;
     } else {
       result.success = true;
       var user = new User();
-      user.name = photoResp.data.username;
-      user.photoSessionId = photoResp.data.sid;
-      user.photoPermission = photoResp.data.permission;
+      user.name = photoResp.data!.username;
+      user.photoSessionId = photoResp.data!.sid;
+      user.photoPermission = photoResp.data!.permission;
 
       result.user = user;
       await storeUserCredentials(userName, password);
@@ -54,7 +54,7 @@ class AuthService {
     FormData formData = FormData.fromMap(body);
     PhotoApiAuthResponse apiResponse = new PhotoApiAuthResponse();
     try {
-      var response = await dio.post(
+      var response = await dio!.post(
         url,
         data: formData,
       );
@@ -64,7 +64,7 @@ class AuthService {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new PhotoApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     return apiResponse;
@@ -85,14 +85,14 @@ class AuthService {
 
     FileApiAuthResponse apiResponse = new FileApiAuthResponse();
     try {
-      var response = await dio.get(url, queryParameters: queryParameters);
+      var response = await dio!.get(url, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = FileApiAuthResponse.fromJson(responseData);
     } catch (e) {
       print(e);
       apiResponse.success = false;
       apiResponse.error = new FileApiError();
-      apiResponse.error.message = e.toString();
+      apiResponse.error!.message = e.toString();
     }
 
     return apiResponse;
@@ -107,7 +107,7 @@ class AuthService {
 }
 
 class AuthenticationResult {
-  String errorMessage;
-  bool success;
-  User user;
+  String? errorMessage;
+  bool? success;
+  User? user;
 }

@@ -4,13 +4,13 @@ import 'package:nas_app/Model/UserSettings.dart';
 
 @immutable
 class UserState {
-  final bool isError;
-  final String errorMessage;
-  final bool isLoading;
-  final User user;
-  final bool credentialsInStorage;
-  final UserSettings userSettings;
-  final String messagingToken;
+  final bool? isError;
+  final String? errorMessage;
+  final bool? isLoading;
+  final User? user;
+  final bool? credentialsInStorage;
+  final UserSettings? userSettings;
+  final String? messagingToken;
 
   UserState(
       {this.isError,
@@ -30,13 +30,13 @@ class UserState {
       userSettings: UserSettings.getInitialSettings());
 
   UserState copyWith(
-      {@required String errorMessage,
-      @required bool isError,
-      @required bool isLoading,
-      @required User user,
-      @required bool credentialsInStorage,
-      @required String messagingToken,
-      @required UserSettings userSettings}) {
+      {required String? errorMessage,
+      required bool? isError,
+      required bool? isLoading,
+      required User? user,
+      required bool? credentialsInStorage,
+      required String? messagingToken,
+      required UserSettings? userSettings}) {
     return UserState(
         messagingToken: messagingToken ?? this.messagingToken,
         errorMessage: errorMessage ?? this.errorMessage,

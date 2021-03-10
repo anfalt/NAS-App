@@ -6,7 +6,7 @@ import 'package:nas_app/redux/List/ListStateAction.dart';
 import 'package:nas_app/redux/store.dart';
 
 class ListItemRow extends StatefulWidget {
-  const ListItemRow({Key key, @required this.listItem}) : super(key: key);
+  const ListItemRow({Key key = const Key("key"), required this.listItem}) : super(key: key);
 
   final ListItem listItem;
   State createState() => new _ListItemRowState();
@@ -14,24 +14,24 @@ class ListItemRow extends StatefulWidget {
 
 class _ListItemRowState extends State<ListItemRow> {
   TextEditingController _itemTitleController = new TextEditingController();
-  FocusNode focusNode;
+  FocusNode? focusNode;
 
   @override
   void initState() {
-    _itemTitleController.text = widget.listItem.title;
+    _itemTitleController.text = widget.listItem.title!;
     _itemTitleController.selection = TextSelection.fromPosition(
         TextPosition(offset: _itemTitleController.text.length));
 
     focusNode = new FocusNode();
 
-    focusNode.addListener(() {
-      if (!focusNode.hasFocus) {
-        Redux.store.dispatch((store) => fetchUpdateListItemAction(
+    focusNode!.addListener(() {
+      if (!focusNode!.hasFocus) {
+        Redux.store!.dispatch((store) => fetchUpdateListItemAction(
             store,
             listService,
             _itemTitleController.text,
-            widget.listItem.iD,
-            widget.listItem.status));
+            widget.listItem.iD!,
+            widget.listItem.status!));
       }
     });
     super.initState();
@@ -39,7 +39,7 @@ class _ListItemRowState extends State<ListItemRow> {
 
   @override
   void dispose() {
-    focusNode.dispose();
+    focusNode!.dispose();
     super.dispose();
   }
 
@@ -55,8 +55,8 @@ class _ListItemRowState extends State<ListItemRow> {
             color: Colors.red,
             icon: Icons.delete,
             onTap: () => {
-                  Redux.store.dispatch((store) => fetchDeleteListItemAction(
-                      store, listService, widget.listItem.iD))
+                  Redux.store!.dispatch((store) => fetchDeleteListItemAction(
+                      store, listService, widget.listItem.iD!))
                 }),
       ],
       child: (() {
@@ -80,7 +80,7 @@ class _ListItemRowState extends State<ListItemRow> {
                 enabled: true,
                 autofocus: false,
                 onSubmitted: (String text) =>
-                    updateItem(widget.listItem.iD, widget.listItem.status),
+                    updateItem(widget.listItem.iD!, widget.listItem.status!),
               ),
               leading: (() {
                 if (widget.listItem.status == ListItemStatus.open) {
@@ -97,20 +97,20 @@ class _ListItemRowState extends State<ListItemRow> {
               trailing: new IconButton(
                   icon: Icon(Icons.save, color: Colors.black),
                   onPressed: () => {
-                        updateItem(widget.listItem.iD, widget.listItem.status)
+                        updateItem(widget.listItem.iD!, widget.listItem.status!)
                       }));
         } else {
           return ListTile(
               title: GestureDetector(
                   child: Text(_itemTitleController.text),
                   onLongPress: markItemAsDone,
-                  onDoubleTap: () => Redux.store.dispatch((store) =>
+                  onDoubleTap: () => Redux.store!.dispatch((store) =>
                       fetchDeleteListItemAction(
-                          store, listService, widget.listItem.iD)),
+                          store, listService, widget.listItem.iD!)),
                   onTap: () {
-                    focusNode.requestFocus();
-                    Redux.store.dispatch((store) =>
-                        fetchListItemEnabledAction(store, widget.listItem.iD));
+                    focusNode!.requestFocus();
+                    Redux.store!.dispatch((store) =>
+                        fetchListItemEnabledAction(store, widget.listItem.iD!));
                   }),
               leading: new IconButton(
                   icon:
@@ -123,27 +123,27 @@ class _ListItemRowState extends State<ListItemRow> {
 
   void markItemAsDone() {
     var newStatus = ListItemStatus.done;
-    Redux.store.dispatch((store) => fetchUpdateListItemAction(store,
-        listService, widget.listItem.title, widget.listItem.iD, newStatus));
+    Redux.store!.dispatch((store) => fetchUpdateListItemAction(store,
+        listService, widget.listItem.title!, widget.listItem.iD!, newStatus));
   }
 
   void markItemAsOpen() {
     var newStatus = ListItemStatus.open;
 
-    Redux.store.dispatch((store) => fetchUpdateListItemAction(store,
-        listService, widget.listItem.title, widget.listItem.iD, newStatus));
+    Redux.store!.dispatch((store) => fetchUpdateListItemAction(store,
+        listService, widget.listItem.title!, widget.listItem.iD!, newStatus));
   }
 
   void saveNewItem() {
     widget.listItem.title = _itemTitleController.text;
-    Redux.store.dispatch((store) => fetchCreateListItemAction(
+    Redux.store!.dispatch((store) => fetchCreateListItemAction(
         store, listService, _itemTitleController.text));
   }
 
   void updateItem(String itemId, ListItemStatus itemStatus) {
     widget.listItem.title = _itemTitleController.text;
-    Redux.store.dispatch((store) => fetchUpdateListItemAction(
+    Redux.store!.dispatch((store) => fetchUpdateListItemAction(
         store, listService, _itemTitleController.text, itemId, itemStatus));
-    focusNode.previousFocus();
+    focusNode!.previousFocus();
   }
 }

@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:math';
 
@@ -10,15 +11,15 @@ import 'package:nas_app/redux/store.dart';
 
 import './NetworkService.dart';
 
-localNot.FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+localNot.FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
 
 class ListService {
   final encrypter = Encrypter(
       AES(Key.fromUtf8("myAPIKeyForInternalUse1234567890"), mode: AESMode.cbc));
   final iv = IV.fromLength(16);
 
-  Dio dio;
-  String token;
+  Dio? dio;
+  String token = "";
 
   ListService() {
     dio = NetworkService.getDioInstance();
@@ -31,7 +32,7 @@ class ListService {
 
     AllListsResponse apiResponse = new AllListsResponse();
     try {
-      var response = await dio.get(url, queryParameters: queryParameters);
+      var response = await dio!.get(url, queryParameters: queryParameters);
       apiResponse = AllListsResponse.fromJson(response.data);
       apiResponse.success = true;
     } catch (e) {
@@ -58,7 +59,7 @@ class ListService {
     ListApiResponse apiResponse = new ListApiResponse();
     try {
       var response =
-          await dio.post(url, data: formdata, queryParameters: queryParameters);
+          await dio!.post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = ListApiResponse.fromJson(responseData);
     } catch (e) {
@@ -82,7 +83,7 @@ class ListService {
     ListApiResponse apiResponse = new ListApiResponse();
     try {
       var response =
-          await dio.post(url, data: formdata, queryParameters: queryParameters);
+          await dio!.post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = ListApiResponse.fromJson(responseData);
     } catch (e) {
@@ -109,7 +110,7 @@ class ListService {
 
     ListApiResponse apiResponse = new ListApiResponse();
     try {
-      var response = await dio.post(url,
+      var response = await dio!.post(url,
           data: jsonEncode(formdata), queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = ListApiResponse.fromJson(responseData);
@@ -136,7 +137,7 @@ class ListService {
     ListApiResponse apiResponse = new ListApiResponse();
     try {
       var response =
-          await dio.post(url, data: formdata, queryParameters: queryParameters);
+          await dio!.post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = ListApiResponse.fromJson(responseData);
     } catch (e) {
@@ -163,7 +164,7 @@ class ListService {
     ListApiResponse apiResponse = new ListApiResponse();
     try {
       var response =
-          await dio.post(url, data: formdata, queryParameters: queryParameters);
+          await dio!.post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = ListApiResponse.fromJson(responseData);
     } catch (e) {
@@ -192,7 +193,7 @@ class ListService {
     ListApiResponse apiResponse = new ListApiResponse();
     try {
       var response =
-          await dio.post(url, data: formdata, queryParameters: queryParameters);
+          await dio!.post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = ListApiResponse.fromJson(responseData);
     } catch (e) {
@@ -206,8 +207,8 @@ class ListService {
 
   String getEncryptedToken() {
     var userInfo = {
-      "sid": Redux.store.state.userState.user.photoSessionId,
-      "username": Redux.store.state.userState.user.name
+      "sid": Redux.store!.state.userState!.user!.photoSessionId,
+      "username": Redux.store!.state.userState!.user!.name
     };
     Encrypted encrypted = encrypter.encrypt(jsonEncode(userInfo), iv: iv);
 
@@ -224,7 +225,7 @@ class ListService {
     final initSettings =
         localNot.InitializationSettings(android: android, iOS: iOS);
 
-    flutterLocalNotificationsPlugin.initialize(initSettings,
+    flutterLocalNotificationsPlugin!.initialize(initSettings,
         onSelectNotification: onSelectNotification);
   }
 
@@ -240,7 +241,7 @@ class ListService {
     final json = jsonEncode(downloadStatus);
     final isSuccess = downloadStatus['success'];
 
-    await flutterLocalNotificationsPlugin.show(
+    await flutterLocalNotificationsPlugin!.show(
         Random().nextInt(100), // notification id
         isSuccess ? 'Success' : 'Failure',
         isSuccess

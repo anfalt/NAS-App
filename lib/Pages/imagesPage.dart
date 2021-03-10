@@ -17,15 +17,15 @@ import 'package:open_file/open_file.dart';
 import 'package:redux/redux.dart';
 
 class ImagesPage extends StatefulWidget {
-  final String albumId;
-  const ImagesPage({Key key, this.albumId}) : super(key: key);
+  final String? albumId;
+  const ImagesPage({Key key = const Key("key"), this.albumId}) : super(key: key);
   @override
   _ImagesPageState createState() => new _ImagesPageState();
 }
 
 class _ImagesPageState extends State<ImagesPage> {
   TextEditingController _textController = new TextEditingController();
-  FileService fileService;
+  FileService? fileService;
   PhotoService photoService = new PhotoService();
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _ImagesPageState extends State<ImagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    final Map arguments = ModalRoute.of(context)!.settings.arguments as Map;
     var albumId = widget.albumId;
     if ((albumId == null || albumId == "") && arguments != null) {
       albumId = arguments["albumId"];
@@ -44,29 +44,29 @@ class _ImagesPageState extends State<ImagesPage> {
         converter: (store) => store.state,
         onInit: (store) => store.dispatch((store) => {
               fetchAssetWithChildrenAction(store, photoService,
-                  store.state.userState.user.photoSessionId, null, albumId)
+                  store!.state.userState!.user!.photoSessionId, null, albumId)
             }),
         builder: (context, appState) {
           return Scaffold(
               appBar: AppBar(
-                title: Text(getAppBarText(appState.assetState)),
+                title: Text(getAppBarText(appState.assetState!)),
                 actions:
-                    getAppBarActions(appState.assetState, appState.userState),
+                    getAppBarActions(appState.assetState!, appState.userState!),
               ),
               floatingActionButton: getFloatingActionButton(
-                  appState.assetState, appState.userState),
+                  appState.assetState!, appState.userState!),
               bottomNavigationBar: AppBottomNav(),
               body: (() {
-                if (!appState.assetState.isLoading) {
-                  if (appState.assetState.isError) {
-                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                if (!appState.assetState!.isLoading!) {
+                  if (appState.assetState!.isError!) {
+                    SchedulerBinding.instance!.addPostFrameCallback((_) {
                       showFailedDialog(
-                          context, appState.assetState.errorMessage);
+                          context, appState.assetState!.errorMessage!);
                     });
                   }
                   return PhotoGallery(
-                    user: appState.userState.user,
-                    album: appState.assetState.asset,
+                    user: appState.userState!.user!,
+                    album: appState.assetState!.asset!,
                   );
                 } else {
                   return Center(child: CircularProgressIndicator());
@@ -76,15 +76,15 @@ class _ImagesPageState extends State<ImagesPage> {
   }
 
   String getAppBarText(AssetState assetState) {
-    if (assetState.isLoading) {
+    if (assetState.isLoading!) {
       return "";
     }
     if (assetState != null &&
         assetState.asset != null &&
-        assetState.asset.info != null &&
-        assetState.asset.info.title != null &&
-        assetState.asset.info.title != "") {
-      return assetState.asset.info.title;
+        assetState.asset!.info != null &&
+        assetState.asset!.info!.title != null &&
+        assetState.asset!.info!.title != "") {
+      return assetState.asset!.info!.title!;
     } else {
       return "Bilder";
     }
@@ -118,12 +118,12 @@ class _ImagesPageState extends State<ImagesPage> {
   }
 
   Widget getFloatingActionButton(AssetState assetState, UserState userState) {
-    if (assetState.asset == null || assetState.asset.assets == null) {
+    if (assetState.asset == null || assetState.asset!.assets == null) {
       return Container();
     }
-    if (assetState.asset.additional.albumPermission.manage) {
+    if (assetState.asset!.additional!.albumPermission!.manage!) {
       return ImageFloatingActionButton(true);
-    } else if (assetState.asset.additional.albumPermission.upload) {
+    } else if (assetState.asset!.additional!.albumPermission!.upload!) {
       return ImageFloatingActionButton(false);
     } else {
       return Container();
@@ -132,15 +132,15 @@ class _ImagesPageState extends State<ImagesPage> {
 
   List<Widget> getAppBarActions(AssetState assetState, UserState userState) {
     List<Widget> appBarActions = [];
-    if (assetState.asset == null || assetState.asset.assets == null) {
+    if (assetState.asset == null || assetState.asset!.assets == null) {
       return appBarActions;
     }
-    var markedAssets = assetState.asset.assets.where((el) {
-      return el.isMarked;
+    var markedAssets = assetState.asset!.assets.where((el) {
+      return el.isMarked!;
     });
 
     if (markedAssets.length > 0 &&
-        assetState.asset.additional.albumPermission.manage) {
+        assetState.asset!.additional!.albumPermission!.manage!) {
       appBarActions.add(IconButton(
           icon: Icon(Icons.download_sharp),
           onPressed: () => {downloadAssets(markedAssets, userState)}));
@@ -163,28 +163,28 @@ class _ImagesPageState extends State<ImagesPage> {
   }
 
   void reloadAsset(UserState userState) {
-    Redux.store.dispatch((Store<AppState> store) =>
+    Redux.store!.dispatch((Store<AppState> store) =>
         fetchAssetWithChildrenAction(
             store,
             photoService,
-            userState.user.photoSessionId,
-            store.state.assetState.asset.parentAsset,
-            store.state.assetState.asset.id));
+            userState.user!.photoSessionId!,
+            store.state.assetState!.asset!.parentAsset,
+            store.state.assetState!.asset?.id));
   }
 
   void downloadAssets(Iterable<AlbumAsset> assets, UserState userState) {
     assets.forEach((element) {
       var downloadUrl;
-      var fileName = element.additional.fileLocation;
+      var fileName = element.additional!.fileLocation;
       if (element.type == "video") {
-        downloadUrl = element.getVideoDownloadUrls(userState.user).values.first;
-        fileService.download(
-            fileName, downloadUrl, "GET", _onSelectNotificationDownload);
+        downloadUrl = element.getVideoDownloadUrls(userState.user!).values.first;
+        fileService!.download(
+            fileName!, downloadUrl, "GET", _onSelectNotificationDownload);
       } else if (element.type == "photo") {
-        downloadUrl = element.getImageDownloadUrl(userState.user);
-        var body = element.getImageDownloadBody(userState.user);
-        fileService.download(
-            fileName, downloadUrl, "POST", _onSelectNotificationDownload, body);
+        downloadUrl = element.getImageDownloadUrl(userState.user!);
+        var body = element.getImageDownloadBody(userState.user!);
+        fileService!.download(
+            fileName!, downloadUrl, "POST", _onSelectNotificationDownload, body);
       }
     });
   }
@@ -192,7 +192,7 @@ class _ImagesPageState extends State<ImagesPage> {
   void deleteAssets(Iterable<AlbumAsset> assets, UserState userState) {
     var photoAndVideoAssetIds = assets
         .where((element) => element.type == "photo" || element.type == "video")
-        .map((el) => el.id)
+        .map((el) => el.id!)
         .toList();
 
     var albumAssets =
@@ -201,24 +201,24 @@ class _ImagesPageState extends State<ImagesPage> {
     if (albumAssets.length > 0) {
       List<String> albumsToDelete = [];
       albumAssets.forEach((element) {
-        if (element.additional.itemCount.photo > 0 ||
-            element.additional.itemCount.video > 0) {
+        if (element.additional!.itemCount!.photo! > 0 ||
+            element.additional!.itemCount!.video! > 0) {
           showFailedDialog(
               context,
               "Album '" +
-                  element.info.name +
+                  element.info!.name! +
                   "' enthält Bilder oder Videos und wird nicht gelöscht");
         } else {
-          albumsToDelete.add(element.id);
+          albumsToDelete.add(element.id!);
         }
       });
       futures.add(photoService.deleteAlbum(albumsToDelete.toList(),
-          userState.user.name, _onSelectNotificationDelete));
+          userState.user!.name!, _onSelectNotificationDelete));
     }
 
     if (photoAndVideoAssetIds.length > 0) {
       futures.add(photoService.deletePhoto(photoAndVideoAssetIds,
-          userState.user.name, _onSelectNotificationDelete));
+          userState.user!.name!, _onSelectNotificationDelete));
     }
 
     Future.wait(futures).then((value) => reloadAsset(userState));
@@ -256,7 +256,7 @@ class _ImagesPageState extends State<ImagesPage> {
   }
 
   void displayAlbumEditDialog(BuildContext context, AlbumAsset markedAsset) {
-    _textController.text = markedAsset.info.title;
+    _textController.text = markedAsset.info!.title!;
     var dialog = new Dialog(
         child: Padding(
             padding: EdgeInsets.all(10),
@@ -269,9 +269,9 @@ class _ImagesPageState extends State<ImagesPage> {
                       controller: _textController,
                     ),
                     new TextButton(
-                      child: new Text("Speichern "),
+                      child: new Text("Speichern"),
                       onPressed: () {
-                        updateAlbum(markedAsset.id, _textController.text);
+                        updateAlbum(markedAsset.id!, _textController.text);
                         Navigator.pop(context);
                       },
                     )
@@ -285,8 +285,8 @@ class _ImagesPageState extends State<ImagesPage> {
     photoService.updateAlbum(
         assetId,
         newAlbumName,
-        Redux.store.state.userState.user.name,
-        Redux.store.state.userState.user.photoSessionId,
+        Redux.store!.state.userState!.user!.name!,
+        Redux.store!.state.userState!.user!.photoSessionId!,
         _onSelectNotificationDelete);
   }
 }

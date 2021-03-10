@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:meta/meta.dart';
@@ -16,13 +17,13 @@ import 'Asset/AssetStateReducer.dart';
 
 AppState appReducer(AppState state, dynamic action) {
   if (action is SetAssetsStateAction) {
-    final nextAssetState = assetsReducer(state.assetState, action);
+    final nextAssetState = assetsReducer(state.assetState!, action);
     return state.copyWith(assetState: nextAssetState);
   } else if (action is SetUserStateAction) {
-    final nextUserState = userReducer(state.userState, action);
+    final nextUserState = userReducer(state.userState!, action);
     return state.copyWith(userState: nextUserState);
   } else if (action is SetListsStateAction) {
-    final nextListState = listsReducer(state.listState, action);
+    final nextListState = listsReducer(state.listState!, action);
     return state.copyWith(listState: nextListState);
   }
 
@@ -31,18 +32,18 @@ AppState appReducer(AppState state, dynamic action) {
 
 @immutable
 class AppState {
-  final AssetState assetState;
-  final UserState userState;
-  final ListState listState;
+  final AssetState? assetState;
+  final UserState? userState;
+  final ListState? listState;
 
   AppState({
-    @required this.assetState,
-    @required this.userState,
-    @required this.listState,
+    required this.assetState,
+    required this.userState,
+    required this.listState,
   });
 
   AppState copyWith(
-      {AssetState assetState, UserState userState, ListState listState}) {
+      {AssetState? assetState, UserState? userState, ListState? listState}) {
     return AppState(
         assetState: assetState ?? this.assetState,
         userState: userState ?? this.userState,
@@ -51,9 +52,9 @@ class AppState {
 }
 
 class Redux {
-  static Store<AppState> _store;
+  static Store<AppState>? _store;
 
-  static Store<AppState> get store {
+  static Store<AppState>? get store {
     if (_store == null) {
       throw Exception("store is not initialized");
     } else {

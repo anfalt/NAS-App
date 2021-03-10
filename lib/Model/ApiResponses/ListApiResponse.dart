@@ -1,8 +1,8 @@
 import 'package:nas_app/Model/List.dart';
 
 class ListApiResponse {
-  bool success;
-  String errorMessage;
+  bool? success;
+  String? errorMessage;
 
   ListApiResponse({this.errorMessage, this.success});
 
@@ -20,12 +20,12 @@ class ListApiResponse {
 }
 
 class AllListsResponse {
-  List<ListElement> body;
-  int itemCount;
-  bool success;
-  String errorMessage;
+  List<ListElement> body = [];
+  int? itemCount;
+  bool? success;
+  String? errorMessage;
 
-  AllListsResponse({this.body, this.itemCount});
+  AllListsResponse({this.body = const [], this.itemCount});
 
   AllListsResponse.fromJson(Map<String, dynamic> json) {
     if (json['body'] != null) {

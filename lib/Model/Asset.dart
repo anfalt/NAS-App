@@ -1,20 +1,21 @@
+
 import 'package:dio/dio.dart';
 import 'package:nas_app/Model/ApiResponses/AlbumApiResponse.dart';
 import 'package:nas_app/Model/User.dart';
 
 class AlbumAsset extends Asset {
-  bool isMarked;
-  AlbumAsset parentAsset;
+  bool? isMarked;
+  AlbumAsset? parentAsset;
   List<AlbumAsset> assets;
 
   AlbumAsset(
-      Additional additional,
-      String thumbnailStatus,
-      String id,
-      Info info,
-      String type,
-      bool isMarked,
-      AlbumAsset parentAsset,
+      Additional? additional,
+      String? thumbnailStatus,
+      String? id,
+      Info? info,
+      String? type,
+      bool? isMarked,
+      AlbumAsset? parentAsset,
       List<AlbumAsset> assets)
       : this.isMarked = isMarked,
         this.parentAsset = parentAsset,
@@ -28,40 +29,40 @@ class AlbumAsset extends Asset {
 
   String getLargeThumbUrl(User user) {
     return "https://anfalt.de/photo/webapi/thumb.php?api=SYNO.PhotoStation.Thumb&method=get&version=1&size=large&id=" +
-        this.id +
+        this.id! +
         "&thumb_sig=" +
-        this.additional.thumbSize.sig +
+        this.additional!.thumbSize!.sig! +
         "&mtime=" +
-        this.additional.thumbSize.large.mtime.toString() +
+        this.additional!.thumbSize!.large!.mtime.toString() +
         "&SynoToken=" +
-        user.photoSessionId;
+        user.photoSessionId!;
   }
 
   String getSmallThumbURL(User user) {
     return "https://anfalt.de/photo/webapi/thumb.php?api=SYNO.PhotoStation.Thumb&method=get&version=1&size=small&id=" +
-        this.id +
+        this.id! +
         "&thumb_sig=" +
-        this.additional.thumbSize.sig +
+        this.additional!.thumbSize!.sig! +
         "&mtime=" +
-        this.additional.thumbSize.small.mtime.toString() +
+        this.additional!.thumbSize!.small!.mtime.toString() +
         "&SynoToken=" +
-        user.photoSessionId;
+        user.photoSessionId!;
   }
 
   String getPreviewThumbURL(User user) {
     return "https://anfalt.de/photo/webapi/thumb.php?api=SYNO.PhotoStation.Thumb&method=get&version=1&size=preview&id=" +
-        this.id +
+        this.id! +
         "&thumb_sig=" +
-        this.additional.thumbSize.sig +
+        this.additional!.thumbSize!.sig! +
         "&mtime=" +
-        this.additional.thumbSize.preview.mtime.toString() +
+        this.additional!.thumbSize!.preview!.mtime.toString() +
         "&SynoToken=" +
-        user.photoSessionId;
+        user.photoSessionId!;
   }
 
   String getImageDownloadUrl(User user) {
     var url = "https://anfalt.de/photo/webapi/download.php?SynoToken=" +
-        user.photoSessionId;
+        user.photoSessionId!;
 
     return url;
   }
@@ -85,14 +86,14 @@ class AlbumAsset extends Asset {
     Map<String, String> result = {};
     var stringPattern =
         "https://anfalt.de/photo/webapi/download.php/1.mp4?api=SYNO.PhotoStation.Download&method=getvideo&version=1&id=" +
-            this.id +
+            this.id! +
             "&quality_id=<qualityID>" +
             "&SynoToken=" +
-            user.photoSessionId;
+            user.photoSessionId!;
 
-    this.additional.videoQuality.forEach((element) {
-      result[element.profileName] =
-          stringPattern.replaceAll("<qualityID>", element.id);
+    this.additional!.videoQuality.forEach((element) {
+      result[element.profileName!] =
+          stringPattern.replaceAll("<qualityID>", element.id!);
     });
 
     return result;
