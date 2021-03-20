@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:nas_app/Model/Asset.dart';
 import 'package:nas_app/Model/User.dart';
 import 'package:nas_app/redux/store.dart';
+import 'package:photo_view/photo_view.dart';
 
 import "VideoPlayerSlide.dart";
 
@@ -209,18 +210,20 @@ Widget photoSliderItem(BuildContext context, AlbumAsset asset, User user,
       : asset.getLargeThumbUrl(user);
 
   return Container(
-      child: CachedNetworkImage(
-          httpHeaders: {
+      child: PhotoView(
+          imageProvider: CachedNetworkImage(
+              httpHeaders: {
         "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId
       },
-          imageUrl: imageUrl,
-          progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                  child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
-                value: downloadProgress.progress,
-              )),
-          errorWidget: (context, url, error) => Icon(Icons.error)));
+              imageUrl: imageUrl,
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  Center(
+                      child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation(Theme.of(context).accentColor),
+                    value: downloadProgress.progress,
+                  )),
+              errorWidget: (context, url, error) => Icon(Icons.error))));
 }
 
 Widget videoSliderItem(BuildContext context, AlbumAsset asset, User user,
