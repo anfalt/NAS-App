@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meta/meta.dart';
@@ -58,8 +59,8 @@ Future<void> fetchUserLogOutAction(Store<AppState> store) async {
     final storage = new FlutterSecureStorage();
     await storage.delete(key: "userName");
     await storage.delete(key: "password");
-    var newUser = store.state.userState.user;
-    newUser.photoSessionId = null;
+    var newUser = store.state.userState!.user;
+    newUser!.photoSessionId = null;
 
     store.dispatch(SetUserStateAction(
       UserState(
@@ -104,8 +105,8 @@ Future<void> fetchUserAction(Store<AppState> store, AuthService authServce,
 
   try {
     var authResult = await authServce.authenticateUser(username, password);
-    if (!authResult.success) {
-      throw ("Fehler bei der Anmeldung" + authResult.errorMessage);
+    if (!authResult.success!) {
+      throw ("Fehler bei der Anmeldung" + authResult.errorMessage!);
     }
     var user = authResult.user;
     store.dispatch(SetUserStateAction(

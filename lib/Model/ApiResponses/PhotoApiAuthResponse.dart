@@ -1,7 +1,8 @@
+
 class PhotoApiAuthResponse {
-  bool success;
-  PhotoApiData data;
-  PhotoApiError error;
+  bool? success;
+  PhotoApiData? data;
+  PhotoApiError? error;
 
   PhotoApiAuthResponse({this.success, this.data});
 
@@ -15,18 +16,18 @@ class PhotoApiAuthResponse {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['success'] = this.success;
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data!.toJson();
     }
     if (this.error != null) {
-      data['error'] = this.error.toJson();
+      data['error'] = this.error!.toJson();
     }
     return data;
   }
 }
 
 class PhotoApiError {
-  int code;
-  String message;
+  int? code;
+  String? message;
 
   PhotoApiError({this.code});
 
@@ -42,16 +43,16 @@ class PhotoApiError {
 }
 
 class PhotoApiData {
-  String sid;
-  String username;
-  bool regSynoUser;
-  bool isAdmin;
-  bool allowComment;
-  PhotoApiPermission permission;
-  bool enableFaceRecog;
-  bool allowPublicShare;
-  bool allowDownload;
-  bool showDetail;
+  String? sid;
+  String? username;
+  bool? regSynoUser;
+  bool? isAdmin;
+  bool? allowComment;
+  PhotoApiPermission? permission;
+  bool? enableFaceRecog;
+  bool? allowPublicShare;
+  bool? allowDownload;
+  bool? showDetail;
 
   PhotoApiData(
       {this.sid,
@@ -88,7 +89,7 @@ class PhotoApiData {
     data['is_admin'] = this.isAdmin;
     data['allow_comment'] = this.allowComment;
     if (this.permission != null) {
-      data['permission'] = this.permission.toJson();
+      data['permission'] = this.permission!.toJson();
     }
     data['enable_face_recog'] = this.enableFaceRecog;
     data['allow_public_share'] = this.allowPublicShare;
@@ -99,9 +100,9 @@ class PhotoApiData {
 }
 
 class PhotoApiPermission {
-  bool browse;
-  bool upload;
-  bool manage;
+  bool? browse;
+  bool? upload;
+  bool? manage;
 
   PhotoApiPermission({this.browse, this.upload, this.manage});
 

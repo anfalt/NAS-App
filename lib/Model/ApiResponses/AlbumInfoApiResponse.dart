@@ -1,9 +1,10 @@
+
 import 'package:nas_app/Model/ApiResponses/AlbumApiResponse.dart';
 
 class AlbumInfoApiResponse {
-  bool success;
-  Data data;
-  AlbumInfoApiError error;
+  bool? success;
+  Data? data;
+  AlbumInfoApiError? error;
 
   AlbumInfoApiResponse({this.success, this.data});
 
@@ -19,18 +20,18 @@ class AlbumInfoApiResponse {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['success'] = this.success;
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data!.toJson();
     }
     if (this.error != null) {
-      data['error'] = this.error.toJson();
+      data['error'] = this.error!.toJson();
     }
     return data;
   }
 }
 
 class AlbumInfoApiError {
-  int code;
-  String message;
+  int? code;
+  String? message;
 
   AlbumInfoApiError({this.code});
 
@@ -45,9 +46,9 @@ class AlbumInfoApiError {
 }
 
 class Data {
-  List<Items> items;
+  List<Items> items = [];
 
-  Data({this.items});
+  Data({this.items = const []});
 
   Data.fromJson(Map<String, dynamic> json) {
     if (json['items'] != null) {
@@ -68,10 +69,10 @@ class Data {
 }
 
 class Items {
-  String id;
-  Info info;
-  Additional additional;
-  String thumbnailStatus;
+  String? id;
+  Info? info;
+  Additional? additional;
+  String? thumbnailStatus;
 
   Items({this.id, this.info, this.additional});
 
@@ -88,10 +89,10 @@ class Items {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     if (this.info != null) {
-      data['info'] = this.info.toJson();
+      data['info'] = this.info!.toJson();
     }
     if (this.additional != null) {
-      data['additional'] = this.additional.toJson();
+      data['additional'] = this.additional!.toJson();
     }
     if (this.thumbnailStatus != null) {
       data['thumbnailStatus'] = this.thumbnailStatus;

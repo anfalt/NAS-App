@@ -1,3 +1,4 @@
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -9,7 +10,7 @@ class NotificationService {
   final String serverToken =
       'AAAAyW_LSxE:APA91bE3aSxT_dN_DIe-iPy4B7ZFK2AhrsPB383k6y0RfdZDf7-O97EsLLHlvZ7X9aRg7KHsC9tR4DI4NYu5n8F3nP1pkqjnk44LfyDahFQvvYleV5Hy-FcFVnQ-6HN2SpBddBAOqnY7';
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-  Dio dio;
+  Dio? dio;
 
   NotificationService() {
     dio = new Dio();
@@ -28,7 +29,7 @@ class NotificationService {
       "priority": 0,
     });
 
-   await dio.post('https://fcm.googleapis.com/fcm/send',
+   await dio!.post('https://fcm.googleapis.com/fcm/send',
         options: Options(headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': 'key=' + serverToken,

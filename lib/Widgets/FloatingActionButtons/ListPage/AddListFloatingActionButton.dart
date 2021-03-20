@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -5,13 +6,13 @@ import 'package:nas_app/Services/ListService.dart';
 import 'package:nas_app/Widgets/FloatingActionButtons/FloatingActionButtonItem.dart';
 
 class AddListFloatingActionButton extends FloatingActionButtonItem {
-  IconData icon = Icons.folder;
+  IconData? icon = Icons.folder;
   final Future<void> Function(String) onSelectNotification;
   AddListFloatingActionButton(this.onSelectNotification);
 
-  void onPressed([BuildContext context]) async {
+  void onPressed([BuildContext? context]) async {
     showDialog(
-        context: context,
+        context: context!,
         builder:(BuildContext context)=> new AddListFloatingActionButtonDialog(onSelectNotification));
   }
 }
@@ -27,7 +28,7 @@ class AddListFloatingActionButtonDialog extends StatefulWidget {
 
 class _AddListFloatingActionButtonDialogState
     extends State<AddListFloatingActionButtonDialog> {
-  String albumName;
+  String? albumName;
   IconData icon = Icons.image;
   TextEditingController _textController = new TextEditingController();
 

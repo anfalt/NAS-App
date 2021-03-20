@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -17,7 +18,7 @@ import 'package:permission_handler/permission_handler.dart';
 class FileService {
   final Dio _dio = NetworkService.getDioInstance();
 
-  localNot.FlutterLocalNotificationsPlugin
+  localNot.FlutterLocalNotificationsPlugin?
       flutterLocalNotificationsPluginDownload;
 
   Future<Directory> _getDownloadDirectory() async {
@@ -75,7 +76,7 @@ class FileService {
 
   Future<void> download(String fileName, String fileUrl, String httpMethod,
       Future<void> Function(String) onSelectNotification,
-      [FormData postBody]) async {
+      [FormData? postBody]) async {
     initNotificationsPluginDownload(onSelectNotification);
     final dir = await _getDownloadDirectory();
     final isPermissionStatusGranted = await _requestPermissions();
@@ -85,7 +86,7 @@ class FileService {
       String saveFileName = basename(file.path);
       final savePath = path.join(dir.path, saveFileName);
       await _startDownload(
-          saveFileName, savePath, fileUrl, httpMethod, postBody);
+          saveFileName, savePath, fileUrl, httpMethod, postBody!);
     }
   }
 
@@ -98,13 +99,13 @@ class FileService {
     final initSettings =
         localNot.InitializationSettings(android: android, iOS: iOS);
 
-    flutterLocalNotificationsPluginDownload.initialize(initSettings,
+    flutterLocalNotificationsPluginDownload!.initialize(initSettings,
         onSelectNotification: onSelectNotification);
   }
 
   Future<void> _startDownload(
       String fileName, String savePath, String fileUrl, String httpMethod,
-      [FormData postBody]) async {
+      [FormData? postBody]) async {
     Map<String, dynamic> result = {
       'isSuccess': false,
       'filePath': null,
@@ -137,7 +138,7 @@ class FileService {
     final json = jsonEncode(downloadStatus);
     final isSuccess = downloadStatus['isSuccess'];
 
-    await flutterLocalNotificationsPluginDownload.show(
+    await flutterLocalNotificationsPluginDownload!.show(
         Random().nextInt(100), // notification id
         isSuccess ? 'Success' : 'Failure',
         isSuccess

@@ -3,11 +3,11 @@ import 'package:nas_app/Model/List.dart';
 
 @immutable
 class ListState {
-  final bool isError;
-  final String errorMessage;
-  final bool isLoading;
-  final List<ListElement> allLists;
-  final String currentListId;
+  final bool? isError;
+  final String? errorMessage;
+  final bool? isLoading;
+  final List<ListElement>? allLists;
+  final String? currentListId;
 
   ListState(
       {this.isError,
@@ -24,11 +24,11 @@ class ListState {
       currentListId: null);
 
   ListState copyWith({
-    @required bool isError,
-    @required String errorMessage,
-    @required bool isLoading,
-    @required List<ListElement> allLists,
-    @required String currentListId,
+    required bool? isError,
+    required String? errorMessage,
+    required bool? isLoading,
+    required List<ListElement>? allLists,
+    required String? currentListId,
   }) {
     return ListState(
         isError: isError ?? this.isError,

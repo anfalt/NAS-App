@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -18,8 +19,8 @@ class _LoginPageState extends State<LogInPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   AuthService authService = new AuthService();
-  Widget loginWidget;
-  Widget loginFromStorage;
+  Widget loginWidget = Container();
+  Widget loginFromStorage = Container();
 
   _LoginPageState() {
     init();
@@ -69,7 +70,7 @@ class _LoginPageState extends State<LogInPage> {
                 
                       child: Text('Login'),
                       onPressed: () {
-                        Redux.store.dispatch((store) => {
+                        Redux.store!.dispatch((store) => {
                               fetchUserAction(store, authService,
                                   nameController.text.trim(), passwordController.text.trim())
                             });
@@ -84,13 +85,13 @@ class _LoginPageState extends State<LogInPage> {
             (store) => {fetchUserActionFromStorage(store, authService)}),
         builder: (context, userState) {
           return (() {
-            if (!userState.isLoading) {
-              if (userState.isError) {
-                SchedulerBinding.instance.addPostFrameCallback((_) {
-                  showLoginFailedDialog(context, userState.errorMessage);
+            if (!userState.isLoading!) {
+              if (userState.isError!) {
+                SchedulerBinding.instance!.addPostFrameCallback((_) {
+                  showLoginFailedDialog(context, userState.errorMessage!);
                 });
               }
-              if (userState.user == null || !userState.credentialsInStorage) {
+              if (userState.user == null || !userState.credentialsInStorage!) {
                 return loginWidget;
               } else {
                 return widget.child;
@@ -107,7 +108,7 @@ class _LoginPageState extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
-    var user = Redux.store.state.userState.user;
+    var user = Redux.store!.state.userState!.user;
     return (() {
       if (user != null && user.photoSessionId != null) {
         return widget.child;

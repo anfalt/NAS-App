@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
 abstract class FloatingActionButtonItem {
-  IconData icon;
+  IconData? icon;
   void onPressed(BuildContext context);
 }

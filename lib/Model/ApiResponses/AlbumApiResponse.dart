@@ -1,9 +1,10 @@
-class AlbumApiResponse {
-  bool success;
-  Data data;
-  AlbumApiError error;
 
-  AlbumApiResponse({this.success, this.data});
+class AlbumApiResponse {
+  bool? success;
+  Data? data;
+  AlbumApiError? error;
+
+  AlbumApiResponse({this.success = false, this.data,});
 
   AlbumApiResponse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
@@ -17,18 +18,18 @@ class AlbumApiResponse {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['success'] = this.success;
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data?.toJson();
     }
     if (this.error != null) {
-      data['error'] = this.error.toJson();
+      data['error'] = this.error?.toJson();
     }
     return data;
   }
 }
 
 class AlbumApiError {
-  int code;
-  String message;
+  int? code;
+  String? message;
 
   AlbumApiError({this.code});
 
@@ -43,11 +44,11 @@ class AlbumApiError {
 }
 
 class Data {
-  int total;
-  int offset;
-  List<Asset> items;
+  int? total;
+  int? offset;
+  List<Asset> items = [];
 
-  Data({this.total, this.offset, this.items});
+  Data({this.total, this.offset, this.items = const []});
 
   Data.fromJson(Map<String, dynamic> json) {
     total = json['total'];
@@ -64,19 +65,18 @@ class Data {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['total'] = this.total;
     data['offset'] = this.offset;
-    if (this.items != null) {
       data['items'] = this.items.map((v) => v.toJson()).toList();
-    }
+    
     return data;
   }
 }
 
 class Asset {
-  Info info;
-  String id;
-  String type;
-  Additional additional;
-  String thumbnailStatus;
+  Info? info;
+  String? id;
+  String? type;
+  Additional? additional;
+  String? thumbnailStatus;
 
   Asset({this.info, this.id, this.type, this.additional, this.thumbnailStatus});
 
@@ -93,12 +93,12 @@ class Asset {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.info != null) {
-      data['info'] = this.info.toJson();
+      data['info'] = this.info!.toJson();
     }
     data['id'] = this.id;
     data['type'] = this.type;
     if (this.additional != null) {
-      data['additional'] = this.additional.toJson();
+      data['additional'] = this.additional!.toJson();
     }
     data['thumbnail_status'] = this.thumbnailStatus;
     return data;
@@ -106,16 +106,16 @@ class Asset {
 }
 
 class Info {
-  String sharepath;
-  String name;
-  String title;
-  String description;
-  int hits;
-  String createdate;
-  String type;
-  bool conversion;
-  bool allowComment;
-  bool allowEmbed;
+  String? sharepath;
+  String? name;
+  String? title;
+  String? description;
+  int? hits;
+  String? createdate;
+  String? type;
+  bool? conversion;
+  bool? allowComment;
+  bool? allowEmbed;
 
   Info(
       {this.sharepath,
@@ -159,13 +159,13 @@ class Info {
 }
 
 class Additional {
-  AlbumPermission albumPermission;
+  AlbumPermission? albumPermission;
 
-  ItemCount itemCount;
-  String fileLocation;
-  ThumbSize thumbSize;
-  VideoCodec videoCodec;
-  List<VideoQuality> videoQuality;
+  ItemCount? itemCount;
+  String? fileLocation;
+  ThumbSize? thumbSize;
+  VideoCodec? videoCodec;
+  List<VideoQuality> videoQuality =[];
 
   Additional(
       {this.albumPermission,
@@ -173,7 +173,7 @@ class Additional {
       this.fileLocation,
       this.thumbSize,
       this.videoCodec,
-      this.videoQuality});
+      this.videoQuality = const []});
 
   Additional.fromJson(Map<String, dynamic> json) {
     albumPermission = json['album_permission'] != null
@@ -200,36 +200,35 @@ class Additional {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.albumPermission != null) {
-      data['album_permission'] = this.albumPermission.toJson();
+      data['album_permission'] = this.albumPermission!.toJson();
     }
     if (this.itemCount != null) {
-      data['item_count'] = this.itemCount.toJson();
+      data['item_count'] = this.itemCount!.toJson();
     }
     data['file_location'] = this.fileLocation;
     if (this.thumbSize != null) {
-      data['thumb_size'] = this.thumbSize.toJson();
+      data['thumb_size'] = this.thumbSize!.toJson();
     }
     if (this.videoCodec != null) {
-      data['video_codec'] = this.videoCodec.toJson();
+      data['video_codec'] = this.videoCodec!.toJson();
     }
-    if (this.videoQuality != null) {
       data['video_quality'] = this.videoQuality.map((v) => v.toJson()).toList();
-    }
+    
     return data;
   }
 }
 
 class PhotoExif {
-  String takendate;
-  String camera;
-  String cameraModel;
-  String exposure;
-  String aperture;
-  int iso;
-  Gps gps;
-  String focalLength;
-  String lens;
-  String flash;
+  String? takendate;
+  String? camera;
+  String? cameraModel;
+  String? exposure;
+  String? aperture;
+  int? iso;
+  Gps? gps;
+  String? focalLength;
+  String? lens;
+  String? flash;
 
   PhotoExif(
       {this.takendate,
@@ -265,7 +264,7 @@ class PhotoExif {
     data['aperture'] = this.aperture;
     data['iso'] = this.iso;
     if (this.gps != null) {
-      data['gps'] = this.gps.toJson();
+      data['gps'] = this.gps!.toJson();
     }
     data['focal_length'] = this.focalLength;
     data['lens'] = this.lens;
@@ -275,8 +274,8 @@ class PhotoExif {
 }
 
 class Gps {
-  String lat;
-  String lng;
+  String? lat;
+  String? lng;
 
   Gps({this.lat, this.lng});
 
@@ -294,14 +293,14 @@ class Gps {
 }
 
 class VideoCodec {
-  String container;
-  String vcodec;
-  String acodec;
-  int resolutionx;
-  int resolutiony;
-  int frameBitrate;
-  int videoBitrate;
-  int audioBitrate;
+  String? container;
+  String? vcodec;
+  String? acodec;
+  int? resolutionx;
+  int? resolutiony;
+  int? frameBitrate;
+  int? videoBitrate;
+  int? audioBitrate;
 
   VideoCodec(
       {this.container,
@@ -339,18 +338,18 @@ class VideoCodec {
 }
 
 class VideoQuality {
-  String id;
-  String container;
-  String vcodec;
-  String acodec;
-  int filesize;
-  int resolutionx;
-  int resolutiony;
-  int videoBitrate;
-  int audioBitrate;
-  int videoProfile;
-  int videoLevel;
-  String profileName;
+  String? id;
+  String? container;
+  String? vcodec;
+  String? acodec;
+  int? filesize;
+  int? resolutionx;
+  int? resolutiony;
+  int? videoBitrate;
+  int? audioBitrate;
+  int? videoProfile;
+  int? videoLevel;
+  String? profileName;
 
   VideoQuality(
       {this.id,
@@ -400,8 +399,8 @@ class VideoQuality {
 }
 
 class Autogenerated {
-  bool success;
-  Data data;
+  bool? success;
+  Data? data;
 
   Autogenerated({this.success, this.data});
 
@@ -414,18 +413,18 @@ class Autogenerated {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['success'] = this.success;
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data!.toJson();
     }
     return data;
   }
 }
 
 class Items {
-  String id;
-  String type;
-  Info info;
-  Additional additional;
-  String thumbnailStatus;
+  String? id;
+  String? type;
+  Info? info;
+  Additional? additional;
+  String? thumbnailStatus;
 
   Items({this.id, this.type, this.info, this.additional, this.thumbnailStatus});
 
@@ -444,10 +443,10 @@ class Items {
     data['id'] = this.id;
     data['type'] = this.type;
     if (this.info != null) {
-      data['info'] = this.info.toJson();
+      data['info'] = this.info!.toJson();
     }
     if (this.additional != null) {
-      data['additional'] = this.additional.toJson();
+      data['additional'] = this.additional!.toJson();
     }
     data['thumbnail_status'] = this.thumbnailStatus;
     return data;
@@ -455,10 +454,10 @@ class Items {
 }
 
 class ThumbSize {
-  Preview preview;
-  Preview small;
-  Preview large;
-  String sig;
+  Preview? preview;
+  Preview? small;
+  Preview? large;
+  String? sig;
 
   ThumbSize({this.preview, this.small, this.large, this.sig});
 
@@ -473,13 +472,13 @@ class ThumbSize {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.preview != null) {
-      data['preview'] = this.preview.toJson();
+      data['preview'] = this.preview!.toJson();
     }
     if (this.small != null) {
-      data['small'] = this.small.toJson();
+      data['small'] = this.small!.toJson();
     }
     if (this.large != null) {
-      data['large'] = this.large.toJson();
+      data['large'] = this.large!.toJson();
     }
     data['sig'] = this.sig;
     return data;
@@ -487,9 +486,9 @@ class ThumbSize {
 }
 
 class Preview {
-  int resolutiony;
-  int resolutionx;
-  int mtime;
+  int? resolutiony;
+  int? resolutionx;
+  int? mtime;
 
   Preview({this.resolutiony, this.resolutionx, this.mtime});
 
@@ -509,9 +508,9 @@ class Preview {
 }
 
 class AlbumPermission {
-  bool browse;
-  bool upload;
-  bool manage;
+  bool? browse;
+  bool? upload;
+  bool? manage;
 
   AlbumPermission({this.browse, this.upload, this.manage});
 
@@ -531,8 +530,8 @@ class AlbumPermission {
 }
 
 class ItemCount {
-  int photo;
-  int video;
+  int? photo;
+  int? video;
 
   ItemCount({this.photo, this.video});
 
@@ -550,9 +549,9 @@ class ItemCount {
 }
 
 class Small {
-  int resolutiony;
-  int resolutionx;
-  int mtime;
+  int? resolutiony;
+  int? resolutionx;
+  int? mtime;
 
   Small({this.resolutiony, this.resolutionx, this.mtime});
 

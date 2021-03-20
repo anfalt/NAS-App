@@ -7,6 +7,6 @@ class UserSettings {
   bool useComicSansFont;
 
   static getInitialSettings() {
-    return new UserSettings(Colors.blue, Colors.blue[300], false);
+    return new UserSettings(Colors.blue, Colors.blue[300]!, false);
   }
 }

@@ -8,10 +8,10 @@ import 'package:nas_app/redux/store.dart';
 
 class Video extends StatelessWidget {
   const Video({
-    Key key,
-    @required this.asset,
-    @required this.user,
-    @required this.imagesForSlider,
+    Key key = const Key("key"),
+    required this.asset,
+    required this.user,
+    required this.imagesForSlider,
   }) : super(key: key);
 
   final AlbumAsset asset;
@@ -24,20 +24,20 @@ class Video extends StatelessWidget {
     var imageUrl = asset.getSmallThumbURL(user);
     var currentAssetID =
         imagesForSlider.indexWhere((note) => note.id == asset.id);
-    var markedAssets = Redux.store.state.assetState.asset.assets.where((el) {
-      return el.isMarked;
+    var markedAssets = Redux.store!.state?.assetState?.asset?.assets.where((el) {
+      return el.isMarked!;
     });
     // We're using a FutureBuilder since thumbData is a future
     return InkWell(
         onLongPress: () => {
-              Redux.store.dispatch(
-                  (store) => {fetchAssetMarkedAction(store, asset.id)})
+              Redux.store!.dispatch(
+                  (store) => {fetchAssetMarkedAction(store, asset.id!)})
             },
         onTap: () => {
-              if (markedAssets.length > 0)
+              if (markedAssets!= null && markedAssets.length > 0)
                 {
-                  Redux.store.dispatch(
-                      (store) => {fetchAssetMarkedAction(store, asset.id)})
+                  Redux.store!.dispatch(
+                      (store) => {fetchAssetMarkedAction(store, asset.id!)})
                 }
               else
                 {
@@ -54,7 +54,7 @@ class Video extends StatelessWidget {
         child: Container(
             margin: EdgeInsets.all(5),
             decoration: BoxDecoration(
-                color: asset.isMarked
+                color: asset.isMarked!
                     ? Theme.of(context).accentColor
                     : Colors.white,
                 borderRadius: BorderRadius.only(
@@ -75,7 +75,7 @@ class Video extends StatelessWidget {
               child: Stack(children: [
                 CachedNetworkImage(
                   httpHeaders: {
-                    "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId
+                    "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId!
                   },
                   imageUrl: imageUrl,
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
@@ -99,7 +99,7 @@ class Video extends StatelessWidget {
                   child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: (() {
-                        if (asset.isMarked) {
+                        if (asset.isMarked!) {
                           return Icon(Icons.check,
                               color: Theme.of(context).accentIconTheme.color);
                         } else {

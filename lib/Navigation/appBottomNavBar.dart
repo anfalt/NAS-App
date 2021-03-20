@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:nas_app/redux/User/UserState.dart';
@@ -11,7 +12,7 @@ class AppBottomNav extends StatelessWidget {
     return StoreConnector<AppState, UserState>(
         converter: (store) => store.state.userState,
         builder: (context, userState) {
-          if (userState.isLoading) {
+          if (userState.isLoading!) {
             return Container();
           }
           var navItems = settings.routes.keys
@@ -19,14 +20,14 @@ class AppBottomNav extends StatelessWidget {
               .map(getNavItemForRoute)
               .toList();
           var userSeesLists =
-              settings.taskListUsers.indexOf(userState.user.name) > -1;
+              settings.taskListUsers.indexOf(userState.user!.name!) > -1;
           if (!userSeesLists) {
             navItems =
                 navItems.where((element) => element.route != "/lists").toList();
           }
-          var currentRoute = ModalRoute.of(context).settings.name;
+          var currentRoute = ModalRoute.of(context)!.settings.name;
           var currentIndex = navItems
-              .indexWhere((element) => currentRoute.contains(element.route));
+              .indexWhere((element) => currentRoute!.contains(element.route));
 
           return BottomNavigationBar(
               currentIndex: currentIndex,

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -12,14 +13,14 @@ import 'package:nas_app/redux/store.dart';
 import 'package:redux/redux.dart';
 
 class ListItemsPage extends StatefulWidget {
-  const ListItemsPage({Key key}) : super(key: key);
+  const ListItemsPage({Key key = const Key("key")}) : super(key: key);
   @override
   _ListItemsPageState createState() => new _ListItemsPageState();
 }
 
 class _ListItemsPageState extends State<ListItemsPage> {
-  ListService listService;
-  String listId;
+  ListService? listService;
+  String? listId;
 
   @override
   void initState() {
@@ -30,37 +31,37 @@ class _ListItemsPageState extends State<ListItemsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    final Map arguments = ModalRoute.of(context)?.settings.arguments as Map;
     listId = arguments["listId"];
 
     return StoreConnector<AppState, AppState>(
         converter: (store) => store.state,
         onInit: (store) => store
-            .dispatch((store) => fetchSetCurrrentListAction(store, listId)),
+            .dispatch((store) => fetchSetCurrrentListAction(store, listId!)),
         builder: (context, appState) {
           return Scaffold(
               appBar: AppBar(
                 title: (() {
-                  var currentList = getCurrentListByID(appState.listState);
+                  var currentList = getCurrentListByID(appState.listState!);
                   if (currentList != null) {
-                    return Text(currentList.title);
+                    return Text(currentList.title!);
                   } else {
                     return Text("Loading");
                   }
                 }()),
                 actions:
-                    getAppBarActions(appState.listState, appState.userState),
+                    getAppBarActions(appState.listState!, appState.userState!),
               ),
               bottomNavigationBar: AppBottomNav(),
               body: (() {
-                if (!appState.listState.isLoading) {
-                  if (appState.listState.isError) {
-                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                if (!appState.listState!.isLoading!) {
+                  if (appState.listState!.isError!) {
+                    SchedulerBinding.instance!.addPostFrameCallback((_) {
                       showFailedDialog(
-                          context, appState.listState.errorMessage);
+                          context, appState.listState!.errorMessage!);
                     });
                   } else {
-                    var currentList = getCurrentListByID(appState.listState);
+                    var currentList = getCurrentListByID(appState.listState!);
                     if (currentList != null) {
                       return ListItemGallery(currentList.items);
                     } else {
@@ -114,15 +115,15 @@ class _ListItemsPageState extends State<ListItemsPage> {
   }
 
   void reloadLists(UserState userState) {
-    Redux.store.dispatch((Store<AppState> store) =>
-        fetchAllListsAction(store, listService, userState.user));
+    Redux.store!.dispatch((Store<AppState> store) =>
+        fetchAllListsAction(store, listService!, userState.user!));
   }
 
-  ListElement getCurrentListByID(ListState listState) {
+  ListElement? getCurrentListByID(ListState listState) {
     if (listState != null &&
         listState.allLists != null &&
         listState.currentListId != null) {
-      return listState.allLists
+      return listState.allLists!
           .firstWhere((element) => element.iD == listState.currentListId);
     } else {
       return null;

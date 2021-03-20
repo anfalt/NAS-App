@@ -6,9 +6,9 @@ class VideoPlayerSlide extends StatefulWidget {
   final Map<String, String> videoUrls;
   final User user;
   const VideoPlayerSlide({
-    Key key,
-    @required this.user,
-    @required this.videoUrls,
+    Key key = const Key("key"),
+    required this.user,
+    required this.videoUrls,
   }) : super(key: key);
   @override
   _VideoPlayerSlideState createState() => _VideoPlayerSlideState();
@@ -21,7 +21,7 @@ class _VideoPlayerSlideState extends State<VideoPlayerSlide> {
         BetterPlayerDataSourceType.network, widget.videoUrls.values.first,
         resolutions: widget.videoUrls,
         headers: {
-          "Cookie": "stay_login=0; PHPSESSID=" + widget.user.photoSessionId
+          "Cookie": "stay_login=0; PHPSESSID=" + widget.user.photoSessionId!
         });
     BetterPlayerController _betterPlayerController;
     ThemeData theme = Theme.of(context);

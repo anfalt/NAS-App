@@ -1,12 +1,13 @@
+
 enum ListItemStatus { deleted, open, done, important }
 
 class ListElement {
-  String iD;
-  String title;
-  String createdDate;
-  String modified;
-  String isDeleted;
-  bool isMarked = false;
+  String? iD;
+  String? title;
+  String? createdDate;
+  String? modified;
+  String? isDeleted;
+  bool? isMarked = false;
   List<ListItem> items = [];
 
   ListElement(
@@ -38,12 +39,12 @@ class ListElement {
 }
 
 class ListItem {
-  String iD;
-  String title;
-  String listID;
-  String createdDate;
-  String modified;
-  ListItemStatus status;
+  String? iD;
+  String? title;
+  String? listID;
+  String? createdDate;
+  String? modified;
+  ListItemStatus? status;
   bool isEnabled = false;
 
   ListItem(

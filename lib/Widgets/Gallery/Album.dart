@@ -8,9 +8,9 @@ import 'package:nas_app/redux/store.dart';
 
 class Album extends StatelessWidget {
   const Album({
-    Key key,
-    @required this.user,
-    @required this.asset,
+    Key key = const Key("key"),
+    required this.user,
+    required this.asset,
   }) : super(key: key);
   final User user;
   final AlbumAsset asset;
@@ -23,29 +23,29 @@ class Album extends StatelessWidget {
     }
 
     var themeData = Theme.of(context);
-    var markedAssets = Redux.store.state.assetState.asset.assets.where((el) {
-      return el.isMarked;
+    var markedAssets = Redux.store?.state.assetState?.asset?.assets.where((el) {
+      return el.isMarked!;
     });
     // We're using a FutureBuilder since thumbData is a future
     return InkWell(
         onLongPress: () => {
-              Redux.store.dispatch(
-                  (store) => {fetchAssetMarkedAction(store, asset.id)})
+              Redux.store?.dispatch(
+                  (store) => {fetchAssetMarkedAction(store, asset.id!)})
             },
         onTap: () => {
-              if (markedAssets.length > 0)
+              if (markedAssets != null && markedAssets.length > 0)
                 {
-                  Redux.store.dispatch(
-                      (store) => {fetchAssetMarkedAction(store, asset.id)})
+                  Redux.store!.dispatch(
+                      (store) => {fetchAssetMarkedAction(store, asset.id!)})
                 }
               else
-                {openAlbum(asset.id)}
+                {openAlbum(asset.id!)}
             },
         child: Container(
           margin: EdgeInsets.all(5),
           decoration: BoxDecoration(
               color:
-                  asset.isMarked ? Theme.of(context).accentColor : Colors.white,
+                  asset.isMarked! ? Theme.of(context).accentColor : Colors.white,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
@@ -75,7 +75,7 @@ class Album extends StatelessWidget {
                 image: DecorationImage(
                     fit: BoxFit.cover,
                     image: CachedNetworkImageProvider(thumbNailUrl, headers: {
-                      "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId
+                      "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId!
                     })));
           } else {
             return BoxDecoration(color: Colors.grey[350]);
@@ -85,7 +85,7 @@ class Album extends StatelessWidget {
       Container(
           height: 200.0,
           decoration: BoxDecoration(
-              color: asset.isMarked ? themeData.accentColor : Colors.white,
+              color: asset.isMarked! ? themeData.accentColor : Colors.white,
               gradient: LinearGradient(
                   begin: FractionalOffset.topCenter,
                   end: FractionalOffset.bottomCenter,
@@ -101,7 +101,7 @@ class Album extends StatelessWidget {
                   ])),
           child: Column(verticalDirection: VerticalDirection.up, children: [
             ListTile(
-              title: Text(asset.info.title),
+              title: Text((asset.info?.title == null ? "" : asset.info!.title!)),
             )
           ])),
       Positioned(
@@ -110,7 +110,7 @@ class Album extends StatelessWidget {
         child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: (() {
-              if (asset.isMarked) {
+              if (asset.isMarked!) {
                 return Icon(Icons.check,
                     color: themeData.accentIconTheme.color);
               } else {
@@ -122,12 +122,12 @@ class Album extends StatelessWidget {
   }
 
   void openAlbum(String assetId) {
-    var store = Redux.store;
+    var store = Redux.store!;
     store.dispatch((store) => {
           fetchAssetWithChildrenAction(
               store,
               new PhotoService(),
-              store.state.userState.user.photoSessionId,
+              store!.state.userState!.user!.photoSessionId,
               asset.parentAsset,
               assetId)
         });

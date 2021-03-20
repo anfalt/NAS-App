@@ -8,10 +8,10 @@ import 'package:nas_app/redux/store.dart';
 
 class Photo extends StatelessWidget {
   const Photo({
-    Key key,
-    @required this.asset,
-    @required this.imagesForSlider,
-    @required this.user,
+    Key key = const Key("key"),
+    required this.asset,
+    required this.imagesForSlider,
+    required this.user,
   }) : super(key: key);
 
   final AlbumAsset asset;
@@ -21,29 +21,29 @@ class Photo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var imageUrl;
-    if (asset.thumbnailStatus.contains("small")) {
+    if (asset.thumbnailStatus!.contains("small")) {
       imageUrl = asset.getSmallThumbURL(user);
-    } else if (asset.thumbnailStatus.contains("preview")) {
+    } else if (asset.thumbnailStatus!.contains("preview")) {
       imageUrl = asset.getPreviewThumbURL(user);
-    } else if (asset.thumbnailStatus.contains("large")) {
+    } else if (asset.thumbnailStatus!.contains("large")) {
       imageUrl = asset.getSmallThumbURL(user);
     }
-    var markedAssets = Redux.store.state.assetState.asset.assets.where((el) {
-      return el.isMarked;
+    var markedAssets = Redux.store!.state?.assetState?.asset?.assets.where((el) {
+      return el.isMarked!;
     });
     var currentAssetIndex =
         imagesForSlider.indexWhere((note) => note.id == asset.id);
     // We're using a FutureBuilder since thumbData is a future
     return InkWell(
         onLongPress: () => {
-              Redux.store.dispatch(
-                  (store) => {fetchAssetMarkedAction(store, asset.id)})
+              Redux.store!.dispatch(
+                  (store) => {fetchAssetMarkedAction(store, asset.id!)})
             },
         onTap: () => {
-              if (markedAssets.length > 0)
+              if (markedAssets != null && markedAssets.length > 0)
                 {
-                  Redux.store.dispatch(
-                      (store) => {fetchAssetMarkedAction(store, asset.id)})
+                  Redux.store!.dispatch(
+                      (store) => {fetchAssetMarkedAction(store, asset.id!)})
                 }
               else
                 {
@@ -61,7 +61,7 @@ class Photo extends StatelessWidget {
           margin: EdgeInsets.all(5),
           decoration: BoxDecoration(
               color:
-                  asset.isMarked ? Theme.of(context).accentColor : Colors.white,
+                  asset.isMarked! ? Theme.of(context).accentColor : Colors.white,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
@@ -85,7 +85,7 @@ class Photo extends StatelessWidget {
                   child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: (() {
-                        if (asset.isMarked) {
+                        if (asset.isMarked!) {
                           return Icon(Icons.check,
                               color: Theme.of(context).accentIconTheme.color);
                         } else {
@@ -102,7 +102,7 @@ class Photo extends StatelessWidget {
       try {
         return CachedNetworkImage(
           httpHeaders: {
-            "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId
+            "Cookie": "stay_login=0; PHPSESSID=" + user.photoSessionId!
           },
           imageUrl: thumbNailUrl,
           progressIndicatorBuilder: (context, url, downloadProgress) =>

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// @dart=2.9
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:nas_app/Controllers/PushNotificationController.dart';
@@ -45,12 +46,14 @@ class MyApp extends StatelessWidget {
             onInit: (store) =>
                 store.dispatch((store) => fetchGetUserSettingsAction(store)),
             builder: (context, userState) {
+               var theme = new ThemeData();
               var userSettings = userState.userSettings;
-              var theme = new ThemeData(
+              if(userSettings != null){
+               theme = new ThemeData(
                   primaryColor: userSettings.primaryColor,
                   accentColor: userSettings.accentColor,
                   fontFamily: userSettings.useComicSansFont ? 'ComicSans' : "");
-
+              }
               return MaterialApp(
                   title: 'Home App',
                   theme: theme,

@@ -23,9 +23,9 @@ class HomePage extends StatelessWidget {
           store.dispatch((store) => fetchLatestAssetMarkedAction(
               store,
               new PhotoService(),
-              Redux.store.state.userState.user.photoSessionId));
+              Redux.store!.state!.userState!.user!.photoSessionId!));
           store.dispatch((store) => fetchAllListsAction(
-              store, new ListService(), Redux.store.state.userState.user));
+              store, new ListService(), Redux.store!.state.userState!.user!));
         },
         builder: (context, appState) {
           return Scaffold(
@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
                   child: (() {
                 if (!isStateLoading(appState)) {
                   if (isStateError(appState)) {
-                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                    SchedulerBinding.instance!.addPostFrameCallback((_) {
                       showFailedDialog(context, getStateErrorMessage(appState));
                     });
                   } else {
@@ -56,23 +56,23 @@ class HomePage extends StatelessWidget {
 }
 
 isStateLoading(AppState appState) {
-  return appState.assetState.isLoading ||
-      appState.listState.isLoading ||
-      appState.userState.isLoading;
+  return appState.assetState!.isLoading! ||
+      appState.listState!.isLoading! ||
+      appState.userState!.isLoading!;
 }
 
 isStateError(AppState appState) {
-  return appState.assetState.isError ||
-      appState.listState.isError ||
-      appState.userState.isError;
+  return appState.assetState!.isError! ||
+      appState.listState!.isError! ||
+      appState.userState!.isError!;
 }
 
 getStateErrorMessage(AppState appState) {
-  return appState.userState.isError
-      ? appState.userState.errorMessage
-      : appState.listState.isError
-          ? appState.listState.errorMessage
-          : appState.assetState.errorMessage;
+  return appState.userState!.isError!
+      ? appState.userState!.errorMessage
+      : appState.listState!.isError!
+          ? appState.listState!.errorMessage
+          : appState.assetState!.errorMessage;
 }
 
 showFailedDialog(BuildContext context, String message) {
@@ -103,7 +103,7 @@ showFailedDialog(BuildContext context, String message) {
 }
 
 Widget getLatestImagesCard(BuildContext context, AppState appState) {
-  if (appState.assetState.latestAssets.length == 0) {
+  if (appState.assetState!.latestAssets!.length == 0) {
     return Padding(padding: EdgeInsets.all(8.0), child:TextButton(
       
       onPressed: () {
@@ -126,22 +126,22 @@ Widget getLatestImagesCard(BuildContext context, AppState appState) {
                 padding: EdgeInsets.only(top: 20, bottom: 10),
                 child: PhotoSlider.getCarouselForHomePage(
                     context,
-                    appState.assetState.latestAssets,
-                    appState.userState.user))));
+                    appState.assetState!.latestAssets!,
+                    appState.userState!.user!))));
   }
 }
 
 Widget getLatestListsCard(BuildContext context, AppState appState) {
   var userSeesLists =
-      settings.taskListUsers.indexOf(appState.userState.user.name) > -1;
+      settings.taskListUsers.indexOf(appState.userState!.user!.name!) > -1;
   if (!userSeesLists) {
     return Container();
   }
 
-  var latestListItems = getLatestLists(appState.listState);
+  var latestListItems = getLatestLists(appState.listState!);
   latestListItems.sort((l1, l2) {
-    var latestItemL1 = DateTime.parse(l1.items[0].modified);
-    var latestItemL2 = DateTime.parse(l2.items[0].modified);
+    var latestItemL1 = DateTime.parse(l1.items[0].modified!);
+    var latestItemL2 = DateTime.parse(l2.items[0].modified!);
     return latestItemL2.difference(latestItemL1).inSeconds;
   });
 
@@ -172,11 +172,11 @@ Widget getLatestListsCard(BuildContext context, AppState appState) {
 
 List<ListElement> getLatestLists(ListState listState) {
   List<ListElement> result = [];
-  listState.allLists.forEach((element) {
+  listState.allLists!.forEach((element) {
     var latestListItems = getLatestListItems(element.items);
     latestListItems.sort((el1, el2) {
-      var d1 = DateTime.parse(el1.modified);
-      var d2 = DateTime.parse(el2.modified);
+      var d1 = DateTime.parse(el1.modified!);
+      var d2 = DateTime.parse(el2.modified!);
       return d2.difference(d1).inSeconds;
     });
     if (latestListItems.isNotEmpty) {
@@ -195,7 +195,7 @@ List<ListElement> getLatestLists(ListState listState) {
 
 List<ListItem> getLatestListItems(List<ListItem> items) {
   return items.where((item) {
-    var diff = new DateTime.now().difference(DateTime.parse(item.createdDate));
+    var diff = new DateTime.now().difference(DateTime.parse(item.createdDate!));
     return diff.inDays < 7 && item.status == ListItemStatus.open;
   }).toList();
 }

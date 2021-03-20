@@ -13,9 +13,9 @@ import 'Video.dart';
 
 class PhotoGallery extends StatelessWidget {
   const PhotoGallery({
-    Key key,
-    @required this.album,
-    @required this.user,
+    Key key = const Key("key"),
+    required this.album,
+    required this.user,
   }) : super(key: key);
 
   final AlbumAsset album;
@@ -57,13 +57,13 @@ class PhotoGallery extends StatelessWidget {
 
   Future<bool> goToParent() {
     if (album.parentAsset != null) {
-      Redux.store.dispatch((Store<AppState> store) =>
+      Redux.store!.dispatch((Store<AppState> store) =>
           fetchAssetWithChildrenAction(
               store,
               new PhotoService(),
-              user.photoSessionId,
-              album.parentAsset.parentAsset,
-              album.parentAsset.id));
+              user.photoSessionId!,
+              album.parentAsset!.parentAsset!,
+              album.parentAsset?.id));
 
       return Future.value(false);
     } else {
