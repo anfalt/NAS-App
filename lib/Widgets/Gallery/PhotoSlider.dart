@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nas_app/Model/Asset.dart';
 import 'package:nas_app/Model/User.dart';
-import 'package:photo_view/photo_view.dart';
-
 import 'package:nas_app/redux/store.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -229,6 +227,7 @@ Widget photoSliderItem(BuildContext context, AlbumAsset asset, User user,
               )),
           imageBuilder: (context, imageProvider) => PhotoView(
                 imageProvider: imageProvider,
+                disableGestures: false,
               ),
           errorWidget: (context, url, error) => Icon(Icons.error)));
 }
