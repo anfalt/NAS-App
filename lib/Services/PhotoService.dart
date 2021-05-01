@@ -1,17 +1,15 @@
-
 import 'dart:convert';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as localNot;
+import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:nas_app/Model/ApiResponses/AlbumApiResponse.dart';
 import 'package:nas_app/Model/ApiResponses/AlbumInfoApiResponse.dart';
 import 'package:nas_app/Model/Asset.dart';
 import 'package:nas_app/Model/User.dart';
 import 'package:nas_app/redux/store.dart';
-import 'package:heic_to_jpg/heic_to_jpg.dart';
-
 
 import './NetworkService.dart';
 
@@ -25,7 +23,8 @@ class PhotoService {
     dio = NetworkService.getDioInstance();
   }
 
-  Future<AlbumApiResponse> getAssets(String sessionId, [String? albumId]) async {
+  Future<AlbumApiResponse> getAssets(String sessionId,
+      [String? albumId]) async {
     var url = "/photo/webapi/album.php";
     var queryParameters = {
       "api": "SYNO.PhotoStation.Album",
@@ -34,7 +33,7 @@ class PhotoService {
       "limit": 1000,
       "type": "album,photo,video",
       "offset": 0,
-      "sort_by": "takendate",
+      "sort_by": "preference",
       "sort_direction": "desc",
       "additional":
           "album_permission,thumb_size,file_location,item_count,video-Codec,video_quality",
@@ -71,13 +70,11 @@ class PhotoService {
     var url = "/photo/webapi/file.php";
     var timeStamp = DateTime.now().millisecondsSinceEpoch;
     var store = Redux.store;
-    if(filePath.toLowerCase().endsWith("heic")){
-        filePath = await HeicToJpg.convert(filePath);
-        fileName = fileName.toLowerCase().replaceAll("heic", "jpg");
+    if (filePath.toLowerCase().endsWith("heic")) {
+      filePath = await HeicToJpg.convert(filePath);
+      fileName = fileName.toLowerCase().replaceAll("heic", "jpg");
     }
-    
 
-    
     FormData formdata = new FormData.fromMap({
       "api": "SYNO.PhotoStation.File",
       "method": "uploadphoto",
@@ -92,8 +89,8 @@ class PhotoService {
     var queryParameters = {"SynoToken": sessionId};
     AlbumApiResponse apiResponse = new AlbumApiResponse();
     try {
-      var response =
-          await dio!.post(url, data: formdata, queryParameters: queryParameters);
+      var response = await dio!
+          .post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
     } catch (e) {
@@ -134,8 +131,8 @@ class PhotoService {
     var queryParameters = {"SynoToken": sessionId};
     AlbumApiResponse apiResponse = new AlbumApiResponse();
     try {
-      var response =
-          await dio!.post(url, data: formdata, queryParameters: queryParameters);
+      var response = await dio!
+          .post(url, data: formdata, queryParameters: queryParameters);
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
     } catch (e) {
@@ -175,7 +172,8 @@ class PhotoService {
           options: Options(
               contentType: "application/x-www-form-urlencoded",
               headers: {
-                "X-SYNO-TOKEN": Redux.store!.state!.userState!.user!.photoSessionId
+                "X-SYNO-TOKEN":
+                    Redux.store!.state!.userState!.user!.photoSessionId
               }));
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
@@ -210,7 +208,8 @@ class PhotoService {
           options: Options(
               contentType: "application/x-www-form-urlencoded",
               headers: {
-                "X-SYNO-TOKEN": Redux.store!.state!.userState!.user!.photoSessionId
+                "X-SYNO-TOKEN":
+                    Redux.store!.state!.userState!.user!.photoSessionId
               }));
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
@@ -329,7 +328,8 @@ class PhotoService {
           options: Options(
               contentType: "application/x-www-form-urlencoded",
               headers: {
-                "X-SYNO-TOKEN": Redux.store!.state!.userState!.user!.photoSessionId
+                "X-SYNO-TOKEN":
+                    Redux.store!.state!.userState!.user!.photoSessionId
               }));
       var responseData = jsonDecode(response.data);
       apiResponse = AlbumApiResponse.fromJson(responseData);
@@ -379,8 +379,8 @@ class PhotoService {
     final initSettings =
         localNot.InitializationSettings(android: android, iOS: iOS);
 
-    flutterLocalNotificationsPlugin!.initialize(initSettings,
-        onSelectNotification: onSelectNotification);
+    flutterLocalNotificationsPlugin!
+        .initialize(initSettings, onSelectNotification: onSelectNotification);
   }
 
   Future<void> _showNotificationUpload(String fileName,
